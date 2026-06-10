@@ -1,0 +1,32 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "CinemaTick",
+    "buildTool": "maven",
+    "cacheProvider": "redis",
+    "clientFramework": "angular",
+    "clientTestFrameworks": [],
+    "clientTheme": "none",
+    "creationTimestamp": 1781076368794,
+    "databaseType": "sql",
+    "devDatabaseType": "mysql",
+    "enableHibernateCache": true,
+    "enableTranslation": false,
+    "entities": [],
+    "feignClient": null,
+    "jhipsterVersion": "8.11.0",
+    "jwtSecretKey": "ZGMxNjAyMTM2ODBkYTc2NmNlZGEwMmZiNmMyZWVlYzljNjNiM2NhZGVhNDNiZTlkN2NhMzk5Njg5ODQ1NmRhZmU2ZjlmZTFkZDUxYzI5NTljYmU3ZjU4ZTdkYjcwOWNiNDIwNTE1MmQ1ZGE5NGVlNjJjZDE1ZTQxYTI1ZjgyOTA=",
+    "microfrontend": null,
+    "microfrontends": [],
+    "nativeLanguage": "en",
+    "packageName": "com.mycompany.myapp",
+    "prodDatabaseType": "mysql",
+    "reactive": false,
+    "serverPort": null,
+    "serviceDiscoveryType": null,
+    "syncUserWithIdp": null,
+    "testFrameworks": [],
+    "withAdminUi": true
+  }
+}

@@ -1,0 +1,75 @@
+entity Phim {
+    tenPhim String required
+    moTa TextBlob
+    thoiLuong Integer
+    daoDien String
+    dienVien TextBlob
+    theLoai String
+    ngayKhoiChieu LocalDate
+    poster String
+    trailer String
+}
+
+entity PhongChieu {
+    tenPhong String required
+    soLuongGhe Integer
+    trangThai String
+}
+
+entity SuatChieu {
+    thoiGianBatDau ZonedDateTime required
+}
+
+entity Ghe {
+    maGhe String required
+    loaiGhe String
+    trangThai String
+}
+
+entity HoaDon {
+    tongTien BigDecimal
+    maGiamGia String
+    soTienGiam BigDecimal
+    phuongThucThanhToan String
+    trangThai String
+    ngayThanhToan ZonedDateTime
+}
+
+entity Ve {
+    maVe String required
+    trangThai String
+}
+
+entity DichVuFB {
+    tenCombo String required
+    moTa TextBlob
+    gia BigDecimal
+    hinhAnh String
+    trangThai String
+}
+
+entity ChiTietFB {
+    soLuong Integer
+}
+
+entity ChiTietHoaDon {
+    giaVe BigDecimal
+}
+
+relationship OneToMany {
+    Phim{suatChieu} to SuatChieu{phim}
+    PhongChieu{suatChieu} to SuatChieu{phong}
+    PhongChieu{ghe} to Ghe{phong}
+    HoaDon{chiTietHoaDon} to ChiTietHoaDon{hoaDon}
+    HoaDon{chiTietFB} to ChiTietFB{hoaDon}
+    SuatChieu{ve} to Ve{suatChieu}
+    Ghe{ve} to Ve{ghe}
+    DichVuFB{chiTietFB} to ChiTietFB{dichVuFB}
+}
+
+relationship ManyToOne {
+    HoaDon{nguoiDung(login)} to User with builtInEntity
+}
+
+pagination * with pagination
+service * with serviceImpl
