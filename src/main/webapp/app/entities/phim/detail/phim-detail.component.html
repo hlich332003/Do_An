@@ -1,0 +1,84 @@
+<div class="container py-3 py-lg-4">
+  @if (phim(); as phimRef) {
+    <div class="movie-detail-container p-3 p-md-4 p-xl-5">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <button
+          type="button"
+          (click)="previousState()"
+          class="btn btn-outline-secondary btn-sm rounded-pill px-3"
+          data-cy="entityDetailsBackButton"
+        >
+          <fa-icon icon="arrow-left" class="me-2"></fa-icon> Quay lại
+        </button>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a
+            [routerLink]="['/admin/phim', phimRef.id, 'edit']"
+            class="btn btn-primary btn-sm rounded-pill px-4"
+            *jhiHasAnyAuthority="'ROLE_ADMIN'"
+          >
+            <fa-icon icon="pencil-alt" class="me-2"></fa-icon> Chỉnh sửa
+          </a>
+        </div>
+      </div>
+
+      <div class="row g-4 g-xl-5 align-items-start">
+        <div class="col-12 col-md-4 col-xl-3">
+          <div class="movie-poster-wrapper">
+            <img
+              [src]="phimRef.poster?.trim() ? phimRef.poster : 'content/images/no-product-image.png'"
+              [alt]="phimRef.tenPhim"
+              class="img-fluid"
+            />
+          </div>
+        </div>
+
+        <div class="col-12 col-md-8 col-xl-9 movie-info">
+          <h1>{{ phimRef.tenPhim }}</h1>
+
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            <span class="badge bg-danger rounded-pill px-3 py-2">{{ phimRef.theLoai || 'Chưa cập nhật' }}</span>
+            <span class="badge border border-secondary text-dark rounded-pill px-3 py-2">2D Phụ đề</span>
+          </div>
+
+          <div class="movie-meta-list mb-4">
+            <div class="detail-row">
+              <span class="detail-label"><fa-icon icon="clock" class="me-2 text-warning"></fa-icon>Thời lượng:</span>
+              <span class="detail-value">{{ phimRef.thoiLuong }} phút</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label"><fa-icon icon="calendar-alt" class="me-2 text-info"></fa-icon>Khởi chiếu:</span>
+              <span class="detail-value">{{ phimRef.ngayKhoiChieu | formatMediumDate }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label"><fa-icon icon="video" class="me-2 text-success"></fa-icon>Đạo diễn:</span>
+              <span class="detail-value">{{ phimRef.daoDien || 'Chưa cập nhật' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label"><fa-icon icon="users" class="me-2 text-primary"></fa-icon>Diễn viên:</span>
+              <span class="detail-value">{{ phimRef.dienVien || 'Chưa cập nhật' }}</span>
+            </div>
+          </div>
+
+          <div class="synopsis mt-4">
+            <h4 class="fw-bold mb-3">Nội dung phim</h4>
+            <p class="mb-0">{{ phimRef.moTa || 'Chưa có mô tả.' }}</p>
+          </div>
+
+          @if (phimRef.trailer) {
+            <div class="mt-4">
+              <a
+                [href]="phimRef.trailer"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-outline-secondary btn-sm rounded-pill px-4"
+              >
+                <fa-icon icon="play-circle" class="me-2"></fa-icon>Xem trailer
+              </a>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

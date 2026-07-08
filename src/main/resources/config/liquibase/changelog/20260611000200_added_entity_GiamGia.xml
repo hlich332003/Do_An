@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        JHipster will add liquibase changesets here.
+        Format the timestamp as follows: yyyyMMddHHmmss (without milliseconds)
+        Examples: 20160103123400, 20170101091200
+    -->
+
+    <changeSet id="20260611000200-1" author="jhipster">
+        <createTable tableName="giam_gia">
+            <column name="id" type="bigint" autoIncrement="true" startWith="1000">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ma_giam_gia" type="varchar(100)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uc_giam_gia_ma_giam_gia_col"/>
+            </column>
+            <column name="mo_ta" type="varchar(500)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="phan_tram_giam" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="so_tien_giam_toi_da" type="decimal(19,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="so_luong_su_dung" type="integer" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="so_luong_con_lai" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ngay_bat_dau" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ngay_ket_thuc" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trang_thai" type="varchar(50)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime" defaultValueDate="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="datetime" defaultValueDate="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260611000200-2" author="jhipster">
+        <createIndex indexName="idx_giam_gia_ma_giam_gia" tableName="giam_gia" unique="true">
+            <column name="ma_giam_gia"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20260611000200-3" author="jhipster">
+        <createIndex indexName="idx_giam_gia_trang_thai_ngay" tableName="giam_gia">
+            <column name="trang_thai"/>
+            <column name="ngay_bat_dau"/>
+            <column name="ngay_ket_thuc"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
+

@@ -1,12 +1,17 @@
 import { Routes } from '@angular/router';
-/* jhipster-needle-add-admin-module-import - JHipster will add admin modules imports here */
-
+import { DashboardComponent } from './dashboard/dashboard.component';
 const routes: Routes = [
   {
-    path: 'user-management',
-    loadChildren: () => import('./user-management/user-management.route'),
-    title: 'userManagement.home.title',
+    path: '',
+    component: DashboardComponent,
+    title: 'Bảng điều khiển',
   },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    title: 'Bảng điều khiển',
+  },
+
   {
     path: 'docs',
     loadComponent: () => import('./docs/docs.component'),
@@ -32,7 +37,6 @@ const routes: Routes = [
     loadComponent: () => import('./metrics/metrics.component'),
     title: 'metrics.title',
   },
-  /* jhipster-needle-add-admin-route - JHipster will add admin routes here */
 ];
 
 export default routes;

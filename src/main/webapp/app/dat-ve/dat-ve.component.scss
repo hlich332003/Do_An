@@ -1,0 +1,36 @@
+.bg-pink {
+  background-color: #ff3d6e !important;
+}
+
+.text-pink {
+  color: #ff3d6e !important;
+}
+
+.border-pink {
+  border-color: #ff3d6e !important;
+  background-color: rgba(255, 61, 110, 0.05);
+}
+
+.btn-pink-gradient {
+  background: linear-gradient(135deg, #ff7a18 0%, #ff3d6e 100%) !important;
+  border: none !important;
+  transition: all 0.25s ease !important;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 61, 110, 0.4) !important;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #ff3d6e;
+  }
+}
+
+.letter-spacing-1 {
+  letter-spacing: 1px;
+}

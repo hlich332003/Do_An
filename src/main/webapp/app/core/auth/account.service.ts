@@ -1,10 +1,8 @@
 import { Injectable, Signal, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable, ReplaySubject, of } from 'rxjs';
 import { catchError, shareReplay, tap } from 'rxjs/operators';
 
-import { StateStorageService } from 'app/core/auth/state-storage.service';
 import { Account } from 'app/core/auth/account.model';
 import { ApplicationConfigService } from '../config/application-config.service';
 
@@ -15,8 +13,6 @@ export class AccountService {
   private accountCache$?: Observable<Account> | null;
 
   private readonly http = inject(HttpClient);
-  private readonly stateStorageService = inject(StateStorageService);
-  private readonly router = inject(Router);
   private readonly applicationConfigService = inject(ApplicationConfigService);
 
   save(account: Account): Observable<{}> {
@@ -51,8 +47,6 @@ export class AccountService {
       this.accountCache$ = this.fetch().pipe(
         tap((account: Account) => {
           this.authenticate(account);
-
-          this.navigateToStoredUrl();
         }),
         shareReplay(),
       );
@@ -70,15 +64,5 @@ export class AccountService {
 
   private fetch(): Observable<Account> {
     return this.http.get<Account>(this.applicationConfigService.getEndpointFor('api/account'));
-  }
-
-  private navigateToStoredUrl(): void {
-    // previousState can be set in the authExpiredInterceptor and in the userRouteAccessService
-    // if login is successful, go to stored previousState and clear previousState
-    const previousUrl = this.stateStorageService.getUrl();
-    if (previousUrl) {
-      this.stateStorageService.clearUrl();
-      this.router.navigateByUrl(previousUrl);
-    }
   }
 }

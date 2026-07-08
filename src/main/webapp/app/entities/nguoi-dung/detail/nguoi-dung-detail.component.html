@@ -1,0 +1,62 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (nguoiDung(); as nguoiDungRef) {
+      <div>
+        <h2 data-cy="nguoiDungDetailsHeading"><span>Người Dùng</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ nguoiDungRef.id }}</span>
+          </dd>
+          <dt><span>Họ Tên</span></dt>
+          <dd>
+            <span>{{ nguoiDungRef.hoTen }}</span>
+          </dd>
+          <dt><span> Email </span></dt>
+          <dd>
+            <span>{{ nguoiDungRef.email }}</span>
+          </dd>
+          <dt><span>Mật Khẩu</span></dt>
+          <dd>
+            <span>{{ nguoiDungRef.matKhau }}</span>
+          </dd>
+          <dt><span>Số Điện Thoại</span></dt>
+          <dd>
+            <span>{{ nguoiDungRef.soDienThoai }}</span>
+          </dd>
+          <dt><span>Địa Chỉ</span></dt>
+          <dd>
+            <span>{{ nguoiDungRef.diaChi }}</span>
+          </dd>
+          <dt><span>Điểm Tích Lũy</span></dt>
+          <dd>
+            <span>{{ nguoiDungRef.diemTichLuy }}</span>
+          </dd>
+          <dt><span>Vai Trò</span></dt>
+          <dd>
+            <span>{{ nguoiDungRef.vaiTro }}</span>
+          </dd>
+          <dt><span>Trạng Thái</span></dt>
+          <dd>
+            <span>{{ nguoiDungRef.trangThai }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span> Quay lại </span>
+        </button>
+
+        <button type="button" [routerLink]="['/admin/nguoi-dung', nguoiDungRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span> Sửa </span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

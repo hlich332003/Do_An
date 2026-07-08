@@ -1,0 +1,323 @@
+<div class="d-flex justify-content-center">
+  <div class="col-12 col-xl-11">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <div class="rounded-4 border-0 shadow-sm p-4 p-lg-5 mb-4 admin-banner">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
+          <div>
+            <p class="text-uppercase small fw-semibold mb-2 banner-kicker">Thiết lập phòng</p>
+            <h2 id="jhi-phong-chieu-heading" data-cy="PhongChieuCreateUpdateHeading" class="mb-2">Thiết lập phòng chiếu</h2>
+          </div>
+        </div>
+      </div>
+
+      <jhi-alert-error />
+
+      @if (saveErrorMessage) {
+        <div class="alert alert-danger rounded-4 border-0 shadow-sm mb-4" role="alert">
+          <fa-icon icon="ban" class="me-2"></fa-icon>
+          <span>{{ saveErrorMessage }}</span>
+        </div>
+      }
+
+      <div class="row g-4">
+        <div class="col-12 col-lg-5">
+          <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                  <h4 class="mb-1">Thông tin phòng</h4>
+                  <p class="text-muted small mb-0">Lưu cấu hình nền của phòng chiếu.</p>
+                </div>
+                <div class="d-flex flex-column align-items-end gap-2">
+                  @if (editForm.controls.id.value !== null) {
+                    <span class="badge rounded-pill text-bg-light border">ID #{{ editForm.controls.id.value }}</span>
+                  }
+                  <span class="badge rounded-pill" [ngClass]="getRoomStatusClass(editForm.controls.trangThai.value)">
+                    {{ getRoomStatusLabel(editForm.controls.trangThai.value) }}
+                  </span>
+                </div>
+              </div>
+
+              @let tenPhongRef = editForm.get('tenPhong')!;
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="field_tenPhong">Tên phòng</label>
+                <input
+                  type="text"
+                  class="form-control form-control-lg"
+                  name="tenPhong"
+                  id="field_tenPhong"
+                  data-cy="tenPhong"
+                  formControlName="tenPhong"
+                  placeholder="Ví dụ: Phòng 1, IMAX, Sweetbox"
+                />
+                @if (tenPhongRef.invalid && (tenPhongRef.dirty || tenPhongRef.touched)) {
+                  <small class="form-text text-danger">Tên phòng là bắt buộc.</small>
+                }
+              </div>
+
+              <div class="row g-3 mt-1">
+                <div class="col-12 col-md-6">
+                  <div class="rounded-4 p-3 bg-light border h-100">
+                    <div class="small text-muted text-uppercase fw-semibold mb-1">Tổng ghế dự kiến</div>
+                    <div class="fs-4 fw-bold">{{ numRows * numSeatsPerRow }}</div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label fw-semibold" for="field_trangThai">Trạng thái phòng</label>
+                  <select class="form-select" name="trangThai" id="field_trangThai" data-cy="trangThai" formControlName="trangThai">
+                    <option value="Hoạt Động">Hoạt động</option>
+                    <option value="Không Hoạt Động">Ngừng khai thác</option>
+                    <option value="Bảo Trì">Bảo trì cả phòng</option>
+                  </select>
+                </div>
+              </div>
+
+              @if (!hasSeatMap || showRegenPanel) {
+                <div class="seat-config-panel mt-4 p-4 rounded-4 border bg-light shadow-sm">
+                  <h5 class="mb-3 text-primary d-flex align-items-center">
+                    <fa-icon icon="cogs" class="me-2"></fa-icon>Cấu hình sơ đồ ghế tùy biến
+                  </h5>
+                  <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-6">
+                      <label class="form-label fw-semibold" for="field_numRows">Số hàng ghế</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="26"
+                        class="form-control"
+                        id="field_numRows"
+                        [ngModel]="numRows"
+                        (ngModelChange)="numRows = $event; onLayoutChange()"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label fw-semibold" for="field_numSeatsPerRow">Số ghế mỗi hàng</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="30"
+                        class="form-control"
+                        id="field_numSeatsPerRow"
+                        [ngModel]="numSeatsPerRow"
+                        (ngModelChange)="numSeatsPerRow = $event; onLayoutChange()"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="row-configs-list">
+                    <div class="fw-semibold mb-3 small text-uppercase text-muted border-bottom pb-2">Cấu hình loại ghế theo từng hàng</div>
+                    <div class="list-group rounded-3 shadow-sm border overflow-auto" style="max-height: 250px">
+                      @for (rowConf of rowConfigs; track rowConf.rowLabel; let i = $index) {
+                        <div class="list-group-item d-flex align-items-center justify-content-between py-2 px-3 border-light">
+                          <span class="fw-semibold">Hàng {{ rowConf.rowLabel }}</span>
+                          <div style="width: 160px">
+                            <select
+                              class="form-select form-select-sm"
+                              [(ngModel)]="rowConfigs[i].type"
+                              (ngModelChange)="isSeatMapDirty = true; onLayoutChange()"
+                              [ngModelOptions]="{ standalone: true }"
+                            >
+                              <option [ngValue]="1">Ghế thường</option>
+                              <option [ngValue]="2">Ghế VIP</option>
+                              <option [ngValue]="3">Ghế đôi</option>
+                            </select>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-7">
+          <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+              <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                  <h4 class="mb-1">Sơ đồ ghế cố định của phòng</h4>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                  @if (phongChieu?.id && hasSeatMap && !showRegenPanel) {
+                    <button type="button" class="btn btn-outline-danger" (click)="enableRegenLayout()">
+                      <fa-icon icon="sync"></fa-icon>&nbsp;<span>Cấu hình lại sơ đồ</span>
+                    </button>
+                  }
+                  @if (canCreateShowtime) {
+                    <a
+                      class="btn btn-outline-secondary"
+                      [routerLink]="['/admin/suat-chieu/new']"
+                      [queryParams]="{ roomId: editForm.controls.id.value }"
+                    >
+                      <fa-icon icon="calendar-alt"></fa-icon>&nbsp;<span>Tạo suất chiếu</span>
+                    </a>
+                  }
+                </div>
+              </div>
+
+              @if (hasSeatMap && !showRegenPanel) {
+                <div class="seat-mode-bar mb-3">
+                  <span class="text-muted small fw-semibold me-2">Chế độ sửa ghế:</span>
+                  <button
+                    type="button"
+                    class="btn btn-sm"
+                    [class.btn-dark]="selectedSeatType === 1"
+                    [class.btn-outline-secondary]="selectedSeatType !== 1"
+                    (click)="selectSeatType(1)"
+                  >
+                    Ghế thường
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm"
+                    [class.btn-dark]="selectedSeatType === 2"
+                    [class.btn-outline-secondary]="selectedSeatType !== 2"
+                    (click)="selectSeatType(2)"
+                  >
+                    Ghế VIP
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm"
+                    [class.btn-dark]="selectedSeatType === 3"
+                    [class.btn-outline-secondary]="selectedSeatType !== 3"
+                    (click)="selectSeatType(3)"
+                  >
+                    Ghế đôi
+                  </button>
+                  <span class="text-muted small ms-auto">Chọn chế độ rồi bấm vào ghế để đổi loại.</span>
+                </div>
+              }
+
+              @if (isSeatMapLoading) {
+                <div class="text-center py-5">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Đang tải...</span>
+                  </div>
+                </div>
+              } @else if (!hasSeatMap || showRegenPanel) {
+                <div class="empty-seat-box p-4 rounded-4 border shadow-sm">
+                  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                    <div>
+                      <h5 class="mb-1 text-primary">Xem trước sơ đồ</h5>
+                    </div>
+                    <div class="text-md-end">
+                      <div class="small text-muted">Ghế dự kiến</div>
+                      <div class="fs-4 fw-bold">{{ plannedSeatCount }}</div>
+                    </div>
+                  </div>
+
+                  <div class="live-preview-board rounded-4 p-3 p-lg-4">
+                    <div class="screen-strip mb-4 mx-auto fw-bold text-center">Màn hình</div>
+                    <div class="d-flex flex-column align-items-center w-100">
+                      @for (rowConf of rowConfigs; track rowConf.rowLabel) {
+                        <div class="d-flex align-items-center gap-2 mb-2 flex-nowrap">
+                          <div class="text-muted fw-semibold row-label">{{ rowConf.rowLabel }}</div>
+                          <div class="d-flex flex-wrap gap-2 flex-grow-1 justify-content-center">
+                            @if (rowConf.type === 3) {
+                              @for (pair of getPreviewCoupleSeatNumbers(rowConf); track pair.left) {
+                                <div class="preview-seat preview-seat-double d-flex align-items-center justify-content-center gap-2">
+                                  <span class="preview-seat-number">{{ pair.left }}</span>
+                                  <span class="preview-seat-number">{{ pair.right }}</span>
+                                </div>
+                              }
+                            } @else {
+                              @for (col of getPreviewSeatNumbers(rowConf); track col) {
+                                <div
+                                  class="border d-flex align-items-center justify-content-center small text-muted preview-seat"
+                                  [ngClass]="getPreviewSeatVariant(rowConf.type)"
+                                >
+                                  {{ col }}
+                                </div>
+                              }
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-end gap-2 mt-4">
+                    @if (showRegenPanel) {
+                      <button type="button" class="btn btn-outline-secondary" (click)="showRegenPanel = false; loadSeats()">Hủy bỏ</button>
+                    }
+                    <span class="text-muted small align-self-center">Lưu sẽ tạo/cập nhật sơ đồ theo cấu hình hiện tại.</span>
+                  </div>
+                </div>
+              } @else {
+                <div class="row g-3 mb-4">
+                  <div class="col-12 col-md-4">
+                    <div class="rounded-4 p-3 h-100 stat-card stat-blue">
+                      <div class="small text-muted">Tổng ghế</div>
+                      <div class="fs-4 fw-bold">{{ totalSeatCount }}</div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-8">
+                    <div class="rounded-4 p-3 h-100 stat-card stat-warm">
+                      <div class="small text-muted">Ghi chú vận hành</div>
+                      <div class="fw-semibold">Ghế và sơ đồ phòng là cấu hình cố định, chỉ thiết lập một lần duy nhất.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="seat-map-container overflow-auto p-4 rounded-4 text-center">
+                  <div class="screen-strip mb-4 mx-auto fw-bold text-center">Màn hình</div>
+
+                  <div class="d-inline-block text-start">
+                    @for (row of seatRows; track $index) {
+                      <div class="d-flex align-items-center mb-2 justify-content-center">
+                        <div class="me-3 fw-bold text-muted row-label">{{ getRowLabel(row) }}</div>
+                        @for (group of row; track group.id) {
+                          <button
+                            type="button"
+                            class="seat mx-1 text-center border shadow-sm d-flex align-items-center justify-content-center"
+                            [ngClass]="getSeatClass(group.primarySeat)"
+                            [style.width.px]="getGroupWidth(group)"
+                            [title]="getSeatTitle(group.primarySeat)"
+                            (click)="applySeatType(group)"
+                          >
+                            <span class="seat-code" [class.seat-code-couple]="group.isCouple">{{
+                              group.isCouple ? getGroupLabel(group) : getSeatLabel(group.primarySeat)
+                            }}</span>
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="legend text-muted text-center mt-3 small">
+                  <span>Trắng: ghế thường</span>
+                  <span>Vàng: ghế VIP</span>
+                  <span>Hồng: ghế đôi</span>
+                  <span>* Ghế đôi được ghép theo cặp 2 ghế liền nhau.</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex flex-wrap gap-3">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Hủy</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>{{ isEditMode ? 'Lưu cấu hình phòng' : 'Lưu và tiếp tục thiết lập ghế' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

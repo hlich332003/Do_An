@@ -1,0 +1,241 @@
+<div>
+  <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <div class="rounded-4 border-0 shadow-sm p-3 p-lg-4 mb-3" style="background: linear-gradient(135deg, #fff6ef, #ffffff)">
+      <h2 id="jhi-phim-heading" data-cy="PhimCreateUpdateHeading" class="mb-0">
+        {{ editForm.controls.id.value !== null ? 'Cập nhật phim' : 'Thêm phim mới' }}
+      </h2>
+    </div>
+
+    <jhi-alert-error />
+
+    @if (saveErrorMessage) {
+      <div class="alert alert-warning rounded-4 shadow-sm" role="alert">
+        {{ saveErrorMessage }}
+      </div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-body p-3 p-lg-4">
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        <div class="row g-3">
+          <!-- Tên phim -->
+          @let tenPhimRef = editForm.get('tenPhim')!;
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold" for="field_tenPhim">Tên phim <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="tenPhim" id="field_tenPhim" data-cy="tenPhim" formControlName="tenPhim" />
+            @if (tenPhimRef.invalid && (tenPhimRef.dirty || tenPhimRef.touched)) {
+              <div class="text-danger small mt-1">
+                @if (editForm.get('tenPhim')?.errors?.required) {
+                  <span>Tên phim là bắt buộc.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Thể loại -->
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold" for="field_theLoai">Thể loại</label>
+            @if (editForm.controls.id.value !== null) {
+              <input
+                type="text"
+                class="form-control"
+                name="theLoai"
+                id="field_theLoai"
+                data-cy="theLoai"
+                formControlName="theLoai"
+                [readonly]="true"
+              />
+            } @else {
+              <select class="form-select" id="field_theLoai" data-cy="theLoai" name="theLoai" formControlName="theLoai">
+                <option value="">Chọn thể loại</option>
+                <option value="Hành động">Hành động</option>
+                <option value="Tình cảm">Tình cảm</option>
+                <option value="Hoạt hình">Hoạt hình</option>
+                <option value="Phiêu lưu">Phiêu lưu</option>
+                <option value="Khoa học viễn tưởng">Khoa học viễn tưởng</option>
+                <option value="Kinh dị">Kinh dị</option>
+                <option value="Hài">Hài</option>
+                <option value="Chính kịch">Chính kịch</option>
+                <option value="Gia đình">Gia đình</option>
+                <option value="Thần thoại">Thần thoại</option>
+                <option value="Trinh thám">Trinh thám</option>
+                <option value="Tâm lý">Tâm lý</option>
+                <option value="Âm nhạc">Âm nhạc</option>
+              </select>
+            }
+          </div>
+
+          <!-- Đạo diễn -->
+          <div class="col-12 col-md-4">
+            <label class="form-label fw-semibold" for="field_daoDien">Đạo diễn</label>
+            <input
+              type="text"
+              class="form-control"
+              name="daoDien"
+              id="field_daoDien"
+              data-cy="daoDien"
+              formControlName="daoDien"
+              [readonly]="editForm.controls.id.value !== null"
+            />
+          </div>
+
+          <!-- Diễn viên -->
+          <div class="col-12 col-md-4">
+            <label class="form-label fw-semibold" for="field_dienVien">Diễn viên</label>
+            <input
+              type="text"
+              class="form-control"
+              name="dienVien"
+              id="field_dienVien"
+              data-cy="dienVien"
+              formControlName="dienVien"
+              [readonly]="editForm.controls.id.value !== null"
+            />
+          </div>
+
+          <!-- Thời lượng -->
+          <div class="col-12 col-md-4">
+            <label class="form-label fw-semibold" for="field_thoiLuong">Thời lượng (phút)</label>
+            <input
+              type="number"
+              class="form-control"
+              name="thoiLuong"
+              id="field_thoiLuong"
+              data-cy="thoiLuong"
+              formControlName="thoiLuong"
+            />
+          </div>
+
+          <!-- Ngày khởi chiếu -->
+          @let ngayKhoiChieuRef = editForm.get('ngayKhoiChieu')!;
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold" for="field_ngayKhoiChieu">Ngày khởi chiếu</label>
+            <input
+              type="date"
+              class="form-control"
+              name="ngayKhoiChieu"
+              id="field_ngayKhoiChieu"
+              data-cy="ngayKhoiChieu"
+              formControlName="ngayKhoiChieu"
+              [readonly]="editForm.controls.id.value !== null"
+            />
+            @if (ngayKhoiChieuRef.invalid && (ngayKhoiChieuRef.dirty || ngayKhoiChieuRef.touched)) {
+              <div class="text-danger small mt-1">
+                @if (editForm.get('ngayKhoiChieu')?.errors?.beforeToday) {
+                  <span>Ngày khởi chiếu không được nhỏ hơn ngày hiện tại.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Trailer URL -->
+          @let trailerRef = editForm.get('trailer')!;
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold" for="field_trailer">Trailer URL (YouTube)</label>
+            <input
+              type="text"
+              class="form-control"
+              name="trailer"
+              id="field_trailer"
+              data-cy="trailer"
+              formControlName="trailer"
+              [readonly]="editForm.controls.id.value !== null"
+              placeholder="https://www.youtube.com/embed/..."
+            />
+            @if (trailerRef.invalid && (trailerRef.dirty || trailerRef.touched)) {
+              <div class="text-danger small mt-1">
+                @if (editForm.get('trailer')?.errors?.maxlength) {
+                  <span>Đường dẫn trailer không được quá 4000 ký tự.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Trạng thái -->
+          <div class="col-12">
+            <label class="form-label fw-semibold" for="field_trangThai">Trạng thái</label>
+            @if (editForm.controls.id.value !== null) {
+              <input
+                type="text"
+                class="form-control"
+                name="trangThai"
+                id="field_trangThai"
+                data-cy="trangThai"
+                [value]="
+                  editForm.get('trangThai')?.value === 'ACTIVE'
+                    ? 'Hoạt động (Mở chiếu)'
+                    : editForm.get('trangThai')?.value === 'INACTIVE'
+                      ? 'Bị khóa (Khóa chiếu)'
+                      : editForm.get('trangThai')?.value
+                "
+                [readonly]="true"
+              />
+            } @else {
+              <select class="form-select" id="field_trangThai" data-cy="trangThai" name="trangThai" formControlName="trangThai">
+                <option value="ACTIVE">Hoạt động (Mở chiếu)</option>
+                <option value="INACTIVE">Bị khóa (Khóa chiếu)</option>
+              </select>
+            }
+          </div>
+
+          <!-- Mô tả -->
+          <div class="col-12">
+            <label class="form-label fw-semibold" for="field_moTa">Mô tả</label>
+            <textarea class="form-control" rows="6" name="moTa" id="field_moTa" data-cy="moTa" formControlName="moTa"></textarea>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="form-label fw-semibold" for="field_poster">Poster</label>
+          <div class="row g-3 align-items-start">
+            <div class="col-12 col-lg-4">
+              <div class="rounded-4 border bg-light d-flex align-items-center justify-content-center p-3" style="min-height: 240px">
+                @if (editForm.get('poster')!.value) {
+                  <img [src]="editForm.get('poster')!.value" alt="Xem trước poster" class="img-fluid rounded-3" style="max-height: 220px" />
+                } @else {
+                  <span class="text-muted small">Chưa có poster</span>
+                }
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-8">
+              <input type="file" class="form-control mb-3" (change)="onFileSelected($event)" accept="image/*" />
+              <input
+                type="text"
+                class="form-control"
+                name="poster"
+                id="field_poster"
+                data-cy="poster"
+                formControlName="poster"
+                placeholder="Hoặc dán URL poster vào đây..."
+              />
+              <div class="form-text">Có thể dùng URL nếu không muốn lưu dữ liệu ảnh trực tiếp.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 d-flex flex-wrap gap-3">
+      <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>&nbsp;<span>Hủy</span>
+      </button>
+
+      <button
+        type="submit"
+        id="save-entity"
+        data-cy="entityCreateSaveButton"
+        [disabled]="editForm.invalid || isSaving"
+        class="btn btn-primary"
+      >
+        <fa-icon icon="save"></fa-icon>&nbsp;<span>Lưu phim</span>
+      </button>
+    </div>
+  </form>
+</div>

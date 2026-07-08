@@ -12,7 +12,31 @@
     <property name="timeType" value="time(6)" dbms="mysql"/>
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084851_added_entity_NguoiDung.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084852_added_entity_DichVuFB.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084853_added_entity_Phim.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084854_added_entity_PhongChieu.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084855_added_entity_Ghe.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084856_added_entity_SuatChieu.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084857_added_entity_HoaDon.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084858_added_entity_Ve.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084859_added_entity_ChiTietFB.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084900_added_entity_ChiTietHoaDon.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260611000100_add_user_lock_and_movie_status.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260611000200_added_entity_GiamGia.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260612101700_added_entity_DanhGia.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260612101701_added_entity_GiamGia.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
-    <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
-    <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20260610084855_added_entity_constraints_Ghe.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084856_added_entity_constraints_SuatChieu.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084857_added_entity_constraints_HoaDon.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084858_added_entity_constraints_Ve.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084859_added_entity_constraints_ChiTietFB.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260610084900_added_entity_constraints_ChiTietHoaDon.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260612101700_added_entity_constraints_DanhGia.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260615093000_fix_ticket_seat_relationship.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260615110000_expand_movie_text_columns.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260615123000_force_expand_movie_text_columns_mssql.xml" relativeToChangelogFile="false"/>
+    <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add constraints changelog here -->
+    <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental changelog here -->
 </databaseChangeLog>

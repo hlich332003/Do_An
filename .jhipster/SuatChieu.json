@@ -1,0 +1,48 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084856"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "thoiGianBatDau",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "thoiGianKetThuc",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "SuatChieu",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "ve",
+      "otherEntityRelationshipName": "suatChieu",
+      "relationshipName": "ve",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "tenPhim",
+      "otherEntityName": "phim",
+      "otherEntityRelationshipName": "suatChieu",
+      "relationshipName": "phim",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "tenPhong",
+      "otherEntityName": "phongChieu",
+      "otherEntityRelationshipName": "suatChieu",
+      "relationshipName": "phongChieu",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

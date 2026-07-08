@@ -1,58 +1,137 @@
-<div class="row">
-  <div class="col-md-3">
-    <span class="hipster img-fluid rounded"></span>
+<div class="home-container">
+  <div
+    class="hero-section"
+    style="
+      background-image: url('content/images/9693734.jpg');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      min-height: 450px;
+      display: flex;
+      align-items: center;
+    "
+  >
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-md-6 offset-md-6 text-center px-4">
+          <h1 class="display-5 fw-bold mb-3 hero-title">Khám phá thế giới điện ảnh</h1>
+          <p class="lead mb-4 fw-medium hero-subtitle">Danh sách phim được lấy thẳng từ backend và hiển thị thành các ô rõ ràng.</p>
+          <a [routerLink]="['/phim-danh-sach']" class="btn btn-danger btn-lg rounded-pill px-5 fw-bold shadow-lg">Xem danh sách phim</a>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="col-md-9">
-    <h1 class="display-4"><span>Welcome, Java Hipster!</span> (Cinema Tick)</h1>
-
-    <p class="lead">This is your homepage</p>
-
-    <div>
-      @if (account() !== null) {
-        <div class="alert alert-success">
-          @if (account(); as accountRef) {
-            <span id="home-logged-message">You are logged in as user &quot;{{ accountRef.login }}&quot;.</span>
-          }
-        </div>
-      } @else {
-        <div class="alert alert-warning">
-          <span>If you want to </span>
-          <a class="alert-link" (click)="login()">sign in</a
-          ><span
-            >, you can try the default accounts:<br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User
-            (login=&quot;user&quot; and password=&quot;user&quot;).</span
-          >
-        </div>
-
-        <div class="alert alert-warning">
-          <span>You don&apos;t have an account yet?</span>&nbsp;
-          <a class="alert-link" routerLink="/account/register">Register a new account</a>
-        </div>
-      }
+  <div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="section-title position-relative m-0 pb-1 border-bottom border-3 border-danger d-inline-block fw-bold text-uppercase">
+        Phim đang chiếu
+      </h2>
+      <button class="btn btn-outline-secondary btn-sm rounded-pill" type="button" (click)="loadMovies()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span class="ms-1">Làm mới</span>
+      </button>
     </div>
 
-    <p>If you have any question on JHipster:</p>
+    <jhi-alert-error />
+    <jhi-alert />
 
-    <ul>
-      <li><a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer">JHipster homepage</a></li>
-      <li>
-        <a href="https://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener noreferrer">JHipster on Stack Overflow</a>
-      </li>
-      <li>
-        <a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" rel="noopener noreferrer"
-          >JHipster bug tracker</a
-        >
-      </li>
-      <li>
-        <a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">JHipster public chat room</a>
-      </li>
-      <li><a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer">follow &#64;jhipster on Twitter</a></li>
-    </ul>
+    <div *ngIf="isLoading" class="d-flex justify-content-center py-4">
+      <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Đang tải...</span>
+      </div>
+    </div>
 
-    <p>
-      <span>If you like JHipster, don&apos;t forget to give us a star on</span>
-      <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">GitHub</a>!
-    </p>
+    <!-- Section 1: Phim đang chiếu -->
+    <div *ngIf="!isLoading && showingPhims.length === 0" class="alert alert-warning rounded-4 shadow-sm mb-3">Chưa có phim đang chiếu.</div>
+
+    <div *ngIf="!isLoading && showingPhims.length > 0" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3 mb-3">
+      <div class="col" *ngFor="let phim of showingPhims; trackBy: trackId">
+        <div class="movie-card shadow-sm h-100 border-0 rounded-3 overflow-hidden position-relative">
+          <a [routerLink]="['/phim-chi-tiet', phim.id]" class="d-block text-decoration-none">
+            <div class="position-relative">
+              <img
+                [src]="getPosterSrc(phim)"
+                [alt]="phim.tenPhim"
+                class="w-100 movie-poster"
+                (error)="onImageError($event)"
+                loading="eager"
+                decoding="async"
+              />
+              <div class="position-absolute top-0 start-0 m-2 d-flex flex-wrap gap-1">
+                <span class="badge bg-danger rounded-1">2D</span>
+                <span class="badge bg-warning text-dark rounded-1 fw-bold">{{ getAgeRating(phim) }}</span>
+              </div>
+            </div>
+          </a>
+          <div class="card-body p-3 bg-white text-center">
+            <h5 class="card-title movie-name fw-bold mb-1">
+              <a [routerLink]="['/phim-chi-tiet', phim.id]" class="text-dark text-decoration-none">{{ phim.tenPhim }}</a>
+            </h5>
+            <p class="card-text text-muted movie-meta mb-2">
+              <fa-icon icon="tags" class="me-1"></fa-icon>
+              {{ formatGenre(phim.theLoai) || 'N/A' }}
+            </p>
+            <p class="card-text text-muted movie-meta mb-2">
+              <fa-icon icon="clock" class="me-1"></fa-icon>
+              {{ phim.thoiLuong || 'N/A' }} phút
+            </p>
+            <p class="card-text text-muted movie-meta mb-0">
+              <fa-icon icon="calendar-alt" class="me-1"></fa-icon>
+              {{ phim.ngayKhoiChieu | formatMediumDate }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Phim sắp chiếu -->
+    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+      <h2 class="section-title position-relative m-0 pb-1 border-bottom border-3 border-danger d-inline-block fw-bold text-uppercase">
+        Phim sắp chiếu
+      </h2>
+    </div>
+
+    <div *ngIf="!isLoading && comingSoonPhims.length === 0" class="alert alert-warning rounded-4 shadow-sm">Chưa có phim sắp chiếu.</div>
+
+    <div *ngIf="!isLoading && comingSoonPhims.length > 0" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3">
+      <div class="col" *ngFor="let phim of comingSoonPhims; trackBy: trackId">
+        <div class="movie-card shadow-sm h-100 border-0 rounded-3 overflow-hidden position-relative">
+          <a [routerLink]="['/phim-chi-tiet', phim.id]" class="d-block text-decoration-none">
+            <div class="position-relative">
+              <img
+                [src]="getPosterSrc(phim)"
+                [alt]="phim.tenPhim"
+                class="w-100 movie-poster"
+                (error)="onImageError($event)"
+                loading="eager"
+                decoding="async"
+              />
+              <div class="position-absolute top-0 start-0 m-2 d-flex flex-wrap gap-1">
+                <span class="badge bg-danger rounded-1">2D</span>
+                <span class="badge bg-warning text-dark rounded-1 fw-bold">{{ getAgeRating(phim) }}</span>
+              </div>
+            </div>
+          </a>
+          <div class="card-body p-3 bg-white text-center">
+            <h5 class="card-title movie-name fw-bold mb-1">
+              <a [routerLink]="['/phim-chi-tiet', phim.id]" class="text-dark text-decoration-none">{{ phim.tenPhim }}</a>
+            </h5>
+            <p class="card-text text-muted movie-meta mb-2">
+              <fa-icon icon="tags" class="me-1"></fa-icon>
+              {{ formatGenre(phim.theLoai) || 'N/A' }}
+            </p>
+            <p class="card-text text-muted movie-meta mb-2">
+              <fa-icon icon="clock" class="me-1"></fa-icon>
+              {{ phim.thoiLuong || 'N/A' }} phút
+            </p>
+            <p class="card-text text-muted movie-meta mb-0">
+              <fa-icon icon="calendar-alt" class="me-1"></fa-icon>
+              {{ phim.ngayKhoiChieu | formatMediumDate }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

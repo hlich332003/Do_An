@@ -93,6 +93,9 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
             ex instanceof com.mycompany.myapp.service.EmailAlreadyUsedException
         ) return (ProblemDetailWithCause) new EmailAlreadyUsedException().getBody();
         if (
+            ex instanceof com.mycompany.myapp.service.PhoneNumberAlreadyUsedException
+        ) return (ProblemDetailWithCause) new PhoneNumberAlreadyUsedException().getBody();
+        if (
             ex instanceof com.mycompany.myapp.service.InvalidPasswordException
         ) return (ProblemDetailWithCause) new InvalidPasswordException().getBody();
 

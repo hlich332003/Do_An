@@ -10,7 +10,7 @@ import { SortDirective } from './sort.directive';
 export class SortByDirective {
   readonly jhiSortBy = input.required<string>();
 
-  iconComponent = contentChild(FaIconComponent);
+  iconComponent = contentChild(FaIconComponent, { descendants: true });
 
   protected sortIcon = faSort;
   protected sortAscIcon = faSortUp;
@@ -34,8 +34,6 @@ export class SortByDirective {
 
   @HostListener('click')
   onClick(): void {
-    if (this.iconComponent()) {
-      this.sort.sort(this.jhiSortBy());
-    }
+    this.sort.sort(this.jhiSortBy());
   }
 }

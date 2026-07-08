@@ -1,0 +1,157 @@
+<div>
+  <h2 id="page-heading" data-cy="GheHeading">
+    <span>Danh sách ghế</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span>Làm mới danh sách</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-ghe"
+        [routerLink]="['/admin/ghe/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span>Thêm mới ghế</span>
+      </button>
+    </div>
+  </h2>
+
+  <div class="mb-3">
+    <div class="input-group input-group-sm">
+      <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Tìm theo mã ghế, hàng, phòng chiếu, trạng thái"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+      />
+      <button class="btn btn-outline-primary" type="button" (click)="onSearch()">Tìm</button>
+      <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()" [disabled]="!searchTerm">Xóa</button>
+    </div>
+  </div>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (ghes().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span>Không tìm thấy ghế nào</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span>ID</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="maGhe">
+              <div class="d-flex">
+                <span>Mã ghế</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="hang">
+              <div class="d-flex">
+                <span>Hàng</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="cot">
+              <div class="d-flex">
+                <span>Cột</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="loaiGhe">
+              <div class="d-flex">
+                <span>Loại ghế</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="trangThai">
+              <div class="d-flex">
+                <span>Trạng thái</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="phongChieu.tenPhong">
+              <div class="d-flex">
+                <span>Phòng chiếu</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ghe of ghes(); track trackId(ghe)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/admin/ghe', ghe.id, 'view']">{{ ghe.id }}</a>
+              </td>
+              <td>{{ ghe.maGhe }}</td>
+              <td>{{ ghe.hang }}</td>
+              <td>{{ ghe.cot }}</td>
+              <td>{{ ghe.loaiGhe }}</td>
+              <td>{{ ghe.trangThai }}</td>
+              <td>
+                @if (ghe.phongChieu) {
+                  <div>
+                    <a [routerLink]="['/admin/phong-chieu', ghe.phongChieu.id, 'view']">{{ ghe.phongChieu.tenPhong }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/admin/ghe', ghe.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline">Xem</span>
+                  </a>
+
+                  <a [routerLink]="['/admin/ghe', ghe.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline">Sửa</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(ghe)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline">Xóa</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (ghes().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

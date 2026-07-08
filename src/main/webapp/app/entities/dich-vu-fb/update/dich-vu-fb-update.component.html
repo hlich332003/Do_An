@@ -1,0 +1,94 @@
+﻿<div class="d-flex justify-content-center">
+  <div class="col-12 col-lg-9 col-xl-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4 p-lg-5">
+          <h2 id="jhi-dich-vu-fb-heading" data-cy="DichVuFBCreateUpdateHeading" class="mb-4">Thêm mới hoặc cập nhật dịch vụ F&B</h2>
+
+          <jhi-alert-error />
+
+          @if (editForm.controls.id.value !== null) {
+            <div class="mb-3">
+              <label class="form-label" for="field_id">ID</label>
+              <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+            </div>
+          }
+
+          @let tenComboRef = editForm.get('tenCombo')!;
+          <div class="mb-3">
+            <label class="form-label" for="field_tenCombo">Tên Combo</label>
+            <input type="text" class="form-control" name="tenCombo" id="field_tenCombo" data-cy="tenCombo" formControlName="tenCombo" />
+            @if (tenComboRef.invalid && (tenComboRef.dirty || tenComboRef.touched)) {
+              <div>
+                @if (editForm.get('tenCombo')?.errors?.required) {
+                  <small class="form-text text-danger">Trường này là bắt buộc.</small>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="field_moTa">Mô tả</label>
+            <input type="text" class="form-control" name="moTa" id="field_moTa" data-cy="moTa" formControlName="moTa" />
+          </div>
+
+          @let giaRef = editForm.get('gia')!;
+          <div class="mb-3">
+            <label class="form-label" for="field_gia">Giá</label>
+            <input type="number" class="form-control" name="gia" id="field_gia" data-cy="gia" formControlName="gia" />
+            @if (giaRef.invalid && (giaRef.dirty || giaRef.touched)) {
+              <div>
+                @if (editForm.get('gia')?.errors?.required) {
+                  <small class="form-text text-danger">Trường này là bắt buộc.</small>
+                }
+                <small class="form-text text-danger" [hidden]="!editForm.get('gia')?.errors?.number">Trường này phải là số.</small>
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="field_hinhAnh">Hình ảnh</label>
+            <input type="file" class="form-control" id="field_hinhAnh" accept="image/*" (change)="onImageSelected($event)" />
+            <input type="hidden" name="hinhAnh" formControlName="hinhAnh" />
+            <div class="form-text">Chọn ảnh từ máy tính. Hệ thống sẽ lưu ảnh dưới dạng đường dẫn dữ liệu.</div>
+
+            @if (imagePreview) {
+              <div class="mt-3">
+                <img
+                  [src]="imagePreview"
+                  alt="Xem trước hình ảnh"
+                  class="img-fluid rounded-4 border shadow-sm"
+                  style="max-height: 220px; object-fit: cover"
+                />
+              </div>
+            }
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label" for="field_trangThai">Trạng thái</label>
+            <select class="form-select" name="trangThai" id="field_trangThai" data-cy="trangThai" formControlName="trangThai">
+              <option value="1">Đang bán</option>
+              <option value="0">Ngừng bán</option>
+            </select>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2">
+            <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+              <fa-icon icon="ban"></fa-icon>&nbsp;<span>Hủy</span>
+            </button>
+
+            <button
+              type="submit"
+              id="save-entity"
+              data-cy="entityCreateSaveButton"
+              [disabled]="editForm.invalid || isSaving"
+              class="btn btn-primary"
+            >
+              <fa-icon icon="save"></fa-icon>&nbsp;<span>Lưu</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

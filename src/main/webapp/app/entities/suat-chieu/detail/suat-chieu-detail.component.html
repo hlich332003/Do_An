@@ -1,0 +1,114 @@
+<div class="d-flex justify-content-center">
+  <div class="col-12 col-xl-10">
+    @if (suatChieu(); as suatChieuRef) {
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-4 p-lg-5">
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+            <div>
+              <p class="text-uppercase small fw-semibold text-muted mb-2">Chi tiết suất chiếu</p>
+              <h2 class="mb-0">Suất chiếu</h2>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              <button
+                type="button"
+                (click)="previousState()"
+                class="btn btn-outline-secondary rounded-pill px-4"
+                data-cy="entityDetailsBackButton"
+              >
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Quay lại</span>
+              </button>
+              <button type="button" [routerLink]="['/admin/suat-chieu', suatChieuRef.id, 'edit']" class="btn btn-primary rounded-pill px-4">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Sửa</span>
+              </button>
+              <button type="button" class="btn btn-danger rounded-pill px-4" (click)="deleteSuatChieu()">
+                <fa-icon icon="trash-alt"></fa-icon>&nbsp;<span>Xóa</span>
+              </button>
+            </div>
+          </div>
+
+          <jhi-alert-error />
+          <jhi-alert />
+
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+              <div class="rounded-4 border bg-light p-3 h-100">
+                <div class="text-muted small fw-semibold">ID</div>
+                <div class="fs-4 fw-bold">{{ suatChieuRef.id }}</div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="rounded-4 border bg-light p-3 h-100">
+                <div class="text-muted small fw-semibold">Phim</div>
+                <div class="fw-bold">
+                  @if (suatChieuRef.phim) {
+                    <a [routerLink]="['/admin/phim', suatChieuRef.phim?.id, 'view']">{{ suatChieuRef.phim?.tenPhim }}</a>
+                  } @else {
+                    Chưa gắn phim
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="rounded-4 border bg-light p-3 h-100">
+                <div class="text-muted small fw-semibold">Phòng chiếu</div>
+                <div class="fw-bold">
+                  @if (suatChieuRef.phongChieu) {
+                    <a [routerLink]="['/admin/phong-chieu', suatChieuRef.phongChieu?.id, 'view']">{{
+                      suatChieuRef.phongChieu?.tenPhong
+                    }}</a>
+                  } @else {
+                    Chưa gắn phòng
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+              <div class="rounded-4 border p-3 h-100">
+                <div class="text-muted small fw-semibold mb-1">Thời gian bắt đầu</div>
+                <div class="fw-bold">{{ suatChieuRef.thoiGianBatDau | formatMediumDatetime }}</div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="rounded-4 border p-3 h-100">
+                <div class="text-muted small fw-semibold mb-1">Thời gian kết thúc</div>
+                <div class="fw-bold">{{ suatChieuRef.thoiGianKetThuc | formatMediumDatetime }}</div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="rounded-4 border p-3 h-100">
+                <div class="text-muted small fw-semibold mb-1">Tổng giá ghế</div>
+                <div class="fw-bold">
+                  {{ (suatChieuRef.giaThuong || 0) + (suatChieuRef.giaVip || 0) + (suatChieuRef.giaVip || 0) * 2 | number }} VND
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <div class="rounded-4 border p-3 h-100">
+                <div class="text-muted small fw-semibold mb-1">Giá ghế thường</div>
+                <div class="fw-bold">{{ suatChieuRef.giaThuong || 0 | number }} VND</div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="rounded-4 border p-3 h-100">
+                <div class="text-muted small fw-semibold mb-1">Giá ghế VIP</div>
+                <div class="fw-bold">{{ suatChieuRef.giaVip || 0 | number }} VND</div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="rounded-4 border p-3 h-100">
+                <div class="text-muted small fw-semibold mb-1">Giá ghế Couple</div>
+                <div class="fw-bold">{{ (suatChieuRef.giaVip || 0) * 2 | number }} VND</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

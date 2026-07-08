@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity Phim.
+    -->
+    <changeSet id="20260610084853-1" author="jhipster">
+        <createTable tableName="phim">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ten_phim" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="mo_ta" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="thoi_luong" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="dao_dien" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="dien_vien" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="the_loai" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="ngay_khoi_chieu" type="date">
+                <constraints nullable="true" />
+            </column>
+            <column name="poster" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="trailer" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+    </changeSet>
+
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
+
+</databaseChangeLog>

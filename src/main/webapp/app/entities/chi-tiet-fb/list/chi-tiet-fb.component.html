@@ -1,0 +1,158 @@
+<div>
+  <h2 id="page-heading" data-cy="ChiTietFBHeading">
+    <span>Chi Tiết F&B</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span> Làm mới danh sách </span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-chi-tiet-fb"
+        [routerLink]="['/admin/chi-tiet-fb/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span>Thêm mới Chi Tiết F&B</span>
+      </button>
+    </div>
+  </h2>
+
+  <div class="mb-3">
+    <div class="input-group input-group-sm">
+      <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+      <input
+        list="chiTietFbSearchSuggestions"
+        type="text"
+        class="form-control"
+        placeholder="Tìm theo mã combo, số lượng, giá bán, combo, hóa đơn"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+      />
+      <button class="btn btn-outline-primary" type="button" (click)="onSearch()">Tìm</button>
+      <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()" [disabled]="!searchTerm">Xóa</button>
+    </div>
+    <datalist id="chiTietFbSearchSuggestions">
+      @for (suggestion of searchSuggestions; track suggestion) {
+        <option [value]="suggestion"></option>
+      }
+    </datalist>
+  </div>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (chiTietFBS().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span>Không tìm thấy Chi Tiết F&B nào</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span>ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="soLuong">
+              <div class="d-flex">
+                <span>Số Lượng</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="giaBan">
+              <div class="d-flex">
+                <span>Giá Bán</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dichVuFB.tenCombo">
+              <div class="d-flex">
+                <span>Dịch Vụ F&B</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="hoaDon.id">
+              <div class="d-flex">
+                <span>Hóa Đơn</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (chiTietFB of chiTietFBS(); track trackId(chiTietFB)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/admin/chi-tiet-fb', chiTietFB.id, 'view']">{{ chiTietFB.id }}</a>
+              </td>
+              <td>{{ chiTietFB.soLuong }}</td>
+              <td>{{ chiTietFB.giaBan }}</td>
+              <td>
+                @if (chiTietFB.dichVuFB) {
+                  <div>
+                    <a [routerLink]="['/admin/dich-vu-fb', chiTietFB.dichVuFB.id, 'view']">{{ chiTietFB.dichVuFB.tenCombo }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (chiTietFB.hoaDon) {
+                  <div>
+                    <a [routerLink]="['/admin/hoa-don', chiTietFB.hoaDon.id, 'view']">{{ chiTietFB.hoaDon.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/admin/chi-tiet-fb', chiTietFB.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline"> Xem </span>
+                  </a>
+
+                  <a [routerLink]="['/admin/chi-tiet-fb', chiTietFB.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline"> Sửa </span>
+                  </a>
+
+                  <button type="submit" (click)="delete(chiTietFB)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline"> Xóa </span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (chiTietFBS().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

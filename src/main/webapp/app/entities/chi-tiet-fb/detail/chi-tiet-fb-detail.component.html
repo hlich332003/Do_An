@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (chiTietFB(); as chiTietFBRef) {
+      <div>
+        <h2 data-cy="chiTietFBDetailsHeading"><span>Chi Tiết F&B</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ chiTietFBRef.id }}</span>
+          </dd>
+          <dt><span>Số Lượng</span></dt>
+          <dd>
+            <span>{{ chiTietFBRef.soLuong }}</span>
+          </dd>
+          <dt><span>Giá Bán</span></dt>
+          <dd>
+            <span>{{ chiTietFBRef.giaBan }}</span>
+          </dd>
+          <dt><span>Dịch Vụ F&B</span></dt>
+          <dd>
+            @if (chiTietFB()!.dichVuFB) {
+              <div>
+                <a [routerLink]="['/admin/dich-vu-fb', chiTietFB()!.dichVuFB?.id, 'view']">{{ chiTietFBRef.dichVuFB?.tenCombo }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span>Hóa Đơn</span></dt>
+          <dd>
+            @if (chiTietFB()!.hoaDon) {
+              <div>
+                <a [routerLink]="['/admin/hoa-don', chiTietFB()!.hoaDon?.id, 'view']">{{ chiTietFBRef.hoaDon?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span> Quay lại </span>
+        </button>
+
+        <button type="button" [routerLink]="['/admin/chi-tiet-fb', chiTietFBRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span> Sửa </span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

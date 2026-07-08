@@ -1,12 +1,21 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Authority;
-import org.springframework.data.jpa.repository.*;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the Authority entity.
+ * Mock AuthorityRepository
  */
-@SuppressWarnings("unused")
 @Repository
-public interface AuthorityRepository extends JpaRepository<Authority, String> {}
+public class AuthorityRepository {
+
+    public Optional<Authority> findById(String id) {
+        return Optional.empty();
+    }
+
+    public List<Authority> findAll() {
+        return List.of();
+    }
+}

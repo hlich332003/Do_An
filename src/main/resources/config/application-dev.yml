@@ -15,12 +15,25 @@
 
 logging:
   level:
-    ROOT: DEBUG
-    tech.jhipster: DEBUG
-    org.hibernate.SQL: DEBUG
-    com.mycompany.myapp: DEBUG
+    ROOT: INFO
+    tech.jhipster: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.orm.jdbc.bind: WARN
+    com.mycompany.myapp: INFO
+    javax.management: INFO
+    sun.rmi: INFO
 
 spring:
+  cache:
+    type: jcache
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.cache.use_second_level_cache: true
+      hibernate.jdbc.batch_size: 50
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
   devtools:
     restart:
       enabled: true
@@ -32,25 +45,48 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/CinemaTick?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-    username: root
-    password:
+    url: jdbc:sqlserver://localhost:1433;databaseName=CinemaTick;trustServerCertificate=true;encrypt=false;
+    username: sa
+    password: YourPassword123!
     hikari:
       poolName: Hikari
       auto-commit: false
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
+      max-lifetime: 600000
+      idle-timeout: 300000
+      connection-timeout: 30000
+      validation-timeout: 5000
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  docker:
+    compose:
+      enabled: false
+      file: src/main/docker/services.yml
+      lifecycle-management: start-and-stop
   liquibase:
+    enabled: false
     # Remove 'faker' if you do not want the sample data to be loaded automatically
     contexts: dev, faker
   mail:
-    host: localhost
-    port: 25
-    username:
-    password:
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: ${SPRING_MAIL_PORT:587}
+    username: catbamaytongdai@gmail.com
+    password: yfdjqmnswhveetkp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: '*'
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
@@ -73,8 +109,6 @@ jhipster:
       expiration: 3600 # By default objects stay 1 hour (in seconds) in the cache
       server: redis://localhost:6379
       cluster: false
-      # server: redis://localhost:6379,redis://localhost:16379,redis://localhost:26379
-      # cluster: true
   # CORS is only enabled by default with the "dev" profile
   cors:
     # Allow Ionic for JHipster by default (* no longer allowed in Spring Boot 2.4+)
@@ -95,7 +129,8 @@ jhipster:
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    base-url: http://127.0.0.1:8080
+    from: catbamaytongdai@gmail.com
+    base-url: http://localhost:9000
   logging:
     use-json-format: false # By default, logs are not in Json format
     logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
@@ -113,3 +148,14 @@ jhipster:
 # ===================================================================
 
 # application:
+
+vnpay:
+  tmn-code: 'DEMO1234' # Thay bằng TmnCode thật của sếp
+  hash-secret: 'SẼ_ĐƯỢC_CUNG_CẤP_BỞI_VNPAY' # Thay bằng HashSecret thật
+  url: 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html' # Đổi thành URL thật khi Live
+  return-url: 'http://localhost:9000/payment-return'
+
+gemini:
+  api-key: ${GEMINI_API_KEY:}
+
+app:

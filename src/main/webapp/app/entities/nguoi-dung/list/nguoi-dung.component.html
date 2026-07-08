@@ -1,0 +1,143 @@
+<div class="user-management-page">
+  <div class="page-hero rounded-4 shadow-sm px-4 py-3 mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+      <div>
+        <p class="section-kicker mb-1">Quản lý hệ thống</p>
+        <h2 id="page-heading" data-cy="NguoiDungHeading" class="mb-0 page-title">Quản lý người dùng</h2>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-secondary btn-sm rounded-pill" type="button" (click)="load()" [disabled]="isLoading">
+          <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+          <span class="ms-1">Làm mới</span>
+        </button>
+        <button
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary btn-sm rounded-pill"
+          [routerLink]="['/admin/nguoi-dung/new']"
+        >
+          <fa-icon icon="plus"></fa-icon>
+          <span class="ms-1">Thêm người dùng</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Row -->
+    <div class="row g-2 align-items-end mt-3">
+      <div class="col-12 col-md-5 col-lg-4">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1" for="nguoiDungKeyword">Từ khóa</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+          <input
+            id="nguoiDungKeyword"
+            list="nguoiDungSearchSuggestions"
+            type="text"
+            class="form-control"
+            placeholder="Tìm theo tên, email, số điện thoại..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+          />
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1" for="roleFilter">Vai trò</label>
+        <select id="roleFilter" class="form-select form-select-sm" [(ngModel)]="selectedRole" (change)="onFilterChange()">
+          <option value="">Tất cả vai trò</option>
+          <option value="ROLE_ADMIN">Admin</option>
+          <option value="ROLE_USER">Người dùng</option>
+        </select>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1" for="statusFilter">Trạng thái</label>
+        <select id="statusFilter" class="form-select form-select-sm" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+          <option value="">Tất cả trạng thái</option>
+          <option value="ACTIVE">Hoạt động</option>
+          <option value="BLOCKED">Bị khóa</option>
+        </select>
+      </div>
+
+      <div class="col-auto">
+        <button class="btn btn-primary btn-sm px-3 rounded-pill" type="button" (click)="onSearch()">Tìm</button>
+        <button
+          class="btn btn-outline-secondary btn-sm ms-1 px-3 rounded-pill"
+          type="button"
+          (click)="clearAllFilters()"
+          [disabled]="!searchTerm && !selectedRole && !selectedStatus"
+        >
+          Xóa lọc
+        </button>
+      </div>
+
+      <datalist id="nguoiDungSearchSuggestions">
+        @for (suggestion of searchSuggestions; track suggestion) {
+          <option [value]="suggestion"></option>
+        }
+      </datalist>
+    </div>
+  </div>
+
+  <jhi-alert-error />
+  <jhi-alert />
+
+  @if (isLoading) {
+    <div class="loading-state card border-0 shadow-sm rounded-4 py-5 text-center">
+      <div class="spinner-border text-primary mx-auto mb-3" role="status" style="width: 3rem; height: 3rem">
+        <span class="visually-hidden">Đang tải...</span>
+      </div>
+      <h5 class="mb-1">Đang tải danh sách người dùng</h5>
+      <p class="text-muted mb-0">Vui lòng chờ trong giây lát.</p>
+    </div>
+  } @else if (nguoiDungs.length === 0) {
+    <div class="empty-state card border-0 shadow-sm rounded-4 py-5 text-center">
+      <fa-icon icon="users" class="text-muted mb-3 opacity-25" style="font-size: 3rem"></fa-icon>
+      <h5 class="mb-1 text-muted">Chưa có người dùng nào để hiển thị</h5>
+      <p class="text-muted mb-0">Thử làm mới dữ liệu hoặc kiểm tra lại API người dùng.</p>
+    </div>
+  } @else {
+    <div class="user-list shadow-sm">
+      @for (nguoiDung of nguoiDungs; track nguoiDung.id) {
+        <article class="user-row">
+          <div class="user-row-main">
+            <div class="avatar-circle">{{ getUserAvatarLetter(nguoiDung) }}</div>
+            <div class="user-row-text">
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <h5 class="mb-0 fw-bold user-name">{{ getUserDisplayName(nguoiDung) }}</h5>
+                <span class="badge rounded-pill" [ngClass]="getRoleBadgeClass(nguoiDung.vaiTro)">
+                  {{ getRoleLabel(nguoiDung.vaiTro) }}
+                </span>
+                <span class="badge rounded-pill" [ngClass]="getStatusBadgeClass(nguoiDung.trangThai)">
+                  {{ getStatusLabel(nguoiDung.trangThai) }}
+                </span>
+              </div>
+              <div class="text-muted small mt-1">{{ nguoiDung.email || 'Chưa cập nhật' }}</div>
+            </div>
+          </div>
+
+          <div class="user-row-meta">
+            <div class="meta-item">
+              <span class="label">Số điện thoại</span>
+              <span class="value">{{ nguoiDung.soDienThoai || 'Chưa cập nhật' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="label">Địa chỉ</span>
+              <span class="value">{{ nguoiDung.diaChi || 'Chưa cập nhật' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="label">Điểm</span>
+              <span class="value text-warning fw-bold">{{ nguoiDung.diemTichLuy ?? 0 }}</span>
+            </div>
+          </div>
+
+          <div class="user-row-actions">
+            <a [routerLink]="['/admin/nguoi-dung', nguoiDung.id, 'view']" class="btn btn-outline-info btn-sm rounded-pill">Xem</a>
+            <a [routerLink]="['/admin/nguoi-dung', nguoiDung.id, 'edit']" class="btn btn-outline-primary btn-sm rounded-pill">Sửa</a>
+            <button type="button" (click)="delete(nguoiDung)" class="btn btn-outline-danger btn-sm rounded-pill">Xóa</button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>

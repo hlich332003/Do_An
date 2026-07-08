@@ -1,0 +1,282 @@
+<div class="container-fluid py-2 dashboard-page">
+  <div class="d-sm-flex align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h2 class="h3 mb-1 text-gray-800">Báo cáo chi tiết</h2>
+    </div>
+    <button class="btn btn-sm btn-success shadow-sm" (click)="exportExcel()">
+      <i class="fas fa-download fa-sm text-white-50"></i>
+      Xuất Excel
+    </button>
+  </div>
+
+  <div class="filter-panel card shadow-sm border-0 mb-3">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-xl-5">
+          <label class="form-label">Bộ lọc nhanh</label>
+          <div class="quick-filter-list">
+            <button
+              *ngFor="let item of quickRanges"
+              type="button"
+              class="quick-filter-btn"
+              [class.active]="selectedQuickRange === item.key"
+              (click)="applyQuickRange(item.key)"
+            >
+              {{ item.label }}
+            </button>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+          <label class="form-label">Từ ngày</label>
+          <input type="date" class="form-control" [(ngModel)]="fromDate" (change)="onDateChange()" />
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+          <label class="form-label">Đến ngày</label>
+          <input type="date" class="form-control" [(ngModel)]="toDate" (change)="onDateChange()" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border"></div>
+  </div>
+
+  <ng-container *ngIf="!isLoading && dashboard">
+    <!-- Row 1: 4 Key Metric Cards -->
+    <div class="row">
+      <!-- 1. Total Revenue -->
+      <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card metric-card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tổng doanh thu</div>
+            <div class="h5 mb-2 font-weight-bold text-gray-800">{{ dashboard.totalRevenue | number: '1.0-0' }} đ</div>
+            <div class="metric-trend">
+              <span [class]="getTrendBadgeClass(dashboard.revenueComparison)">
+                {{ getTrendIcon(dashboard.revenueComparison) }} {{ getComparisonPercent(dashboard.revenueComparison) }}%
+              </span>
+              <span [class]="getTrendValueClass(dashboard.revenueComparison)">
+                {{ getComparisonActionSymbol(dashboard.revenueComparison)
+                }}{{ getComparisonDelta(dashboard.revenueComparison, 'currency') }}
+              </span>
+              <span class="text-muted small">vs kỳ trước ({{ getComparisonPrevious(dashboard.revenueComparison, 'currency') }})</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Sold Tickets -->
+      <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card metric-card border-left-info shadow h-100 py-2">
+          <div class="card-body">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Vé đã bán</div>
+            <div class="h5 mb-2 font-weight-bold text-gray-800">{{ dashboard.totalTicketsSold }}</div>
+            <div class="metric-trend">
+              <span [class]="getTrendBadgeClass(dashboard.ticketsComparison)">
+                {{ getTrendIcon(dashboard.ticketsComparison) }} {{ getComparisonPercent(dashboard.ticketsComparison) }}%
+              </span>
+              <span [class]="getTrendValueClass(dashboard.ticketsComparison)">
+                {{ getComparisonActionSymbol(dashboard.ticketsComparison) }}{{ getComparisonDelta(dashboard.ticketsComparison, 'count') }}
+              </span>
+              <span class="text-muted small">vs kỳ trước ({{ getComparisonPrevious(dashboard.ticketsComparison, 'count') }})</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Occupancy Rate -->
+      <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card metric-card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tỷ lệ lấp đầy trung bình</div>
+            <div class="h5 mb-2 font-weight-bold text-gray-800">{{ getPercentage(dashboard.averageOccupancyRate) }}</div>
+            <div class="text-muted small">Mức độ phủ ghế của tất cả suất chiếu trong khoảng thời gian đã chọn.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Combo Attach Rate -->
+      <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card metric-card border-left-warning shadow h-100 py-2">
+          <div class="card-body">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Tỷ lệ khách mua kèm combo</div>
+            <div class="h5 mb-2 font-weight-bold text-gray-800">{{ getPercentage(dashboard.comboAttachRate) }}</div>
+            <div class="text-muted small">{{ getComboAttachText() }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Top Rankings (3 Columns) -->
+    <!-- Row 2: Top Rankings (3 Columns) -->
+    <div class="row mb-3">
+      <!-- 1. Top Movies -->
+      <div class="col-12 col-lg-4 mb-3">
+        <div class="card shadow h-100">
+          <div class="card-header py-3 bg-light">
+            <h6 class="m-0 font-weight-bold text-primary">Top phim hot (Doanh thu)</h6>
+          </div>
+          <div class="card-body">
+            <ng-container *ngIf="hasRankingData(dashboard.topMovies); else emptyMovies">
+              <table class="table table-sm align-middle mb-0" style="table-layout: fixed; width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-nowrap" style="width: 45%">Phim</th>
+                    <th class="text-nowrap" style="width: 20%">Vé</th>
+                    <th class="text-nowrap" style="width: 35%">Doanh thu</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of paddedTopMovies; let i = index">
+                    <td class="text-truncate text-nowrap" [title]="item.name">{{ i + 1 }}. {{ item.name }}</td>
+                    <td class="text-nowrap">{{ item.name ? item.count : '' }}</td>
+                    <td class="text-nowrap">{{ item.name ? (item.revenue | number: '1.0-0') + ' đ' : '' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-container>
+            <ng-template #emptyMovies>
+              <div class="empty-state text-muted py-3">Chưa có dữ liệu...</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Room Performance -->
+      <div class="col-12 col-lg-4 mb-3">
+        <div class="card shadow h-100">
+          <div class="card-header py-3 bg-light">
+            <h6 class="m-0 font-weight-bold text-primary">Hiệu suất phòng chiếu</h6>
+          </div>
+          <div class="card-body">
+            <ng-container *ngIf="hasRankingData(dashboard.topRooms); else emptyRooms">
+              <table class="table table-sm align-middle mb-0" style="table-layout: fixed; width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-nowrap" style="width: 35%">Phòng</th>
+                    <th class="text-nowrap" style="width: 40%">Vé / Ghế</th>
+                    <th class="text-nowrap" style="width: 25%">Lấp đầy</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of paddedTopRooms; let i = index">
+                    <td class="text-truncate text-nowrap" [title]="item.name">{{ i + 1 }}. {{ item.name }}</td>
+                    <td class="text-nowrap">{{ item.name ? item.count + '/' + item.capacity : '' }}</td>
+                    <td class="text-nowrap">{{ item.name ? getPercentage(item.percentage) : '' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-container>
+            <ng-template #emptyRooms>
+              <div class="empty-state text-muted py-3">Chưa có dữ liệu...</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Top Combo F&B Bán Chạy -->
+      <div class="col-12 col-lg-4 mb-3">
+        <div class="card shadow h-100">
+          <div class="card-header py-3 bg-light">
+            <h6 class="m-0 font-weight-bold text-primary">Top combo F&B bán chạy</h6>
+          </div>
+          <div class="card-body">
+            <ng-container *ngIf="hasRankingData(dashboard.topCombos); else emptyCombos">
+              <table class="table table-sm align-middle mb-0" style="table-layout: fixed; width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-nowrap" style="width: 45%">Combo</th>
+                    <th class="text-nowrap" style="width: 20%">Đã bán</th>
+                    <th class="text-nowrap" style="width: 35%">Doanh thu</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of paddedTopCombos; let i = index">
+                    <td class="text-truncate text-nowrap" [title]="item.name">{{ i + 1 }}. {{ item.name }}</td>
+                    <td class="text-nowrap">{{ item.name ? item.count : '' }}</td>
+                    <td class="text-nowrap">{{ item.name ? (item.revenue | number: '1.0-0') + ' đ' : '' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-container>
+            <ng-template #emptyCombos>
+              <div class="empty-state text-muted py-3">Chưa có dữ liệu...</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Revenue & Status Doughnut Charts -->
+    <div class="row mb-3">
+      <div class="col-md-6 mb-3 mb-md-0">
+        <div class="card shadow h-100">
+          <div class="card-header py-3 bg-light">
+            <h6 class="m-0 font-weight-bold text-primary">Cơ cấu doanh thu (Vé vs F&B)</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap d-flex justify-content-center align-items-center">
+              <canvas #revenuePieChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow h-100">
+          <div class="card-header py-3 bg-light">
+            <h6 class="m-0 font-weight-bold text-primary">Trạng thái thanh toán hóa đơn</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap d-flex justify-content-center align-items-center">
+              <canvas #statusPieChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 4: Specialized Analytics (Peak Hours & Ticket Types) -->
+    <div class="row mb-3">
+      <div class="col-xl-6 mb-3 mb-xl-0">
+        <div class="card shadow h-100">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lượng khách theo ca chiếu (Peak Hours)</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap d-flex justify-content-center align-items-center" style="height: 280px">
+              <canvas #peakHourChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-6">
+        <div class="card shadow h-100">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Cơ cấu loại ghế bán ra</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap d-flex justify-content-center align-items-center" style="height: 280px">
+              <canvas #ticketTypeChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 5: Movie Revenue Comparison Bar Chart -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow mb-3">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">So sánh doanh thu Top phim</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap d-flex justify-content-center align-items-center" style="height: 320px">
+              <canvas #movieBarChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

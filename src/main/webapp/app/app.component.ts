@@ -8,13 +8,13 @@ import locale from '@angular/common/locales/en';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { fontAwesomeIcons } from './config/font-awesome-icons';
-import MainComponent from './layouts/main/main.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'jhi-app',
-  template: '<jhi-main />',
+  template: '<router-outlet></router-outlet>',
   imports: [
-    MainComponent,
+    RouterOutlet,
     // jhipster-needle-angular-add-module JHipster will add new module here
   ],
 })

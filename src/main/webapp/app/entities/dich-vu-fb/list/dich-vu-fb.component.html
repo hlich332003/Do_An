@@ -1,0 +1,149 @@
+<div class="dich-vu-page">
+  <div class="page-hero rounded-4 shadow-sm px-4 py-3 mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+      <div>
+        <p class="section-kicker mb-1">Quản lý dịch vụ</p>
+        <h2 id="page-heading" data-cy="DichVuFBHeading" class="mb-0 page-title">Dịch Vụ F&B</h2>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-secondary btn-sm rounded-pill" (click)="load()" [disabled]="isLoading">
+          <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+          <span>Làm mới</span>
+        </button>
+        <button
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary jh-create-entity create-dich-vu-fb btn-sm rounded-pill"
+          [routerLink]="['/admin/dich-vu-fb/new']"
+        >
+          <fa-icon icon="plus"></fa-icon>
+          <span>Thêm mới</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Row -->
+    <div class="row g-2 align-items-end mt-3">
+      <div class="col-12 col-md-5 col-lg-4">
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+          <input
+            id="dichVuFbSearch"
+            list="dichVuFbSearchSuggestions"
+            type="text"
+            class="form-control"
+            placeholder="Tìm combo, bắp nước, trạng thái..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+          />
+        </div>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary btn-sm px-3 rounded-pill" type="button" (click)="onSearch()">Tìm</button>
+        <button
+          class="btn btn-outline-secondary btn-sm ms-1 px-3 rounded-pill"
+          type="button"
+          (click)="clearSearch()"
+          [disabled]="!searchTerm"
+        >
+          Xóa
+        </button>
+      </div>
+
+      <datalist id="dichVuFbSearchSuggestions">
+        @for (suggestion of searchSuggestions; track suggestion) {
+          <option [value]="suggestion"></option>
+        }
+      </datalist>
+    </div>
+  </div>
+
+  <jhi-alert-error />
+  <jhi-alert />
+
+  @if (dichVuFBS().length === 0) {
+    <div class="alert alert-warning rounded-4 shadow-sm" id="no-result">
+      <span>Không tìm thấy dịch vụ F&B nào</span>
+    </div>
+  } @else {
+    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-5 g-3 mt-1" id="entities">
+      @for (dichVuFB of dichVuFBS(); track trackId(dichVuFB)) {
+        <div class="col" data-cy="entityTable">
+          <div class="combo-card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="combo-image-wrap position-relative">
+              <img
+                [src]="getImageSrc(dichVuFB)"
+                [alt]="dichVuFB.tenCombo"
+                class="combo-image"
+                (error)="onImageError($event)"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="combo-price-badge">{{ formatPrice(dichVuFB.gia) }} đ</span>
+            </div>
+
+            <div class="card-body p-3 d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                <div class="min-w-0">
+                  <h5 class="combo-title mb-1">{{ dichVuFB.tenCombo }}</h5>
+                  <div class="text-muted small text-truncate">{{ formatStatusLabel(dichVuFB.trangThai) }}</div>
+                </div>
+                <span class="combo-id">#{{ dichVuFB.id }}</span>
+              </div>
+
+              <p class="combo-desc text-muted mb-3">{{ dichVuFB.moTa || 'Chưa có mô tả.' }}</p>
+
+              <div class="mt-auto d-flex gap-2">
+                <a
+                  [routerLink]="['/admin/dich-vu-fb', dichVuFB.id, 'view']"
+                  class="btn btn-outline-info btn-sm rounded-pill flex-grow-1"
+                  data-cy="entityDetailsButton"
+                >
+                  <fa-icon icon="eye"></fa-icon>
+                  <span class="ms-1">Xem</span>
+                </a>
+                <a
+                  [routerLink]="['/admin/dich-vu-fb', dichVuFB.id, 'edit']"
+                  class="btn btn-outline-primary btn-sm rounded-pill flex-grow-1"
+                  data-cy="entityEditButton"
+                >
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                  <span class="ms-1">Sửa</span>
+                </a>
+                <button
+                  type="button"
+                  (click)="delete(dichVuFB)"
+                  class="btn btn-outline-danger btn-sm rounded-pill"
+                  data-cy="entityDeleteButton"
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (dichVuFBS().length > 0) {
+    <div class="mt-4">
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

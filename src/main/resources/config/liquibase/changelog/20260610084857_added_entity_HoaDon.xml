@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity HoaDon.
+    -->
+    <changeSet id="20260610084857-1" author="jhipster">
+        <createTable tableName="hoa_don">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tong_tien" type="decimal(21,2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="ma_giam_gia" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="so_tien_giam" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="phuong_thuc_thanh_toan" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="ma_giao_dich" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="trang_thai" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="ngay_tao" type="${datetimeType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="ngay_thanh_toan" type="${datetimeType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="nguoi_dung_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+        <dropDefaultValue tableName="hoa_don" columnName="ngay_tao" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="hoa_don" columnName="ngay_thanh_toan" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
+
+</databaseChangeLog>

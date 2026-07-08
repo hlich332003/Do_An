@@ -1,0 +1,47 @@
+.fb-card {
+  transition: all 0.25s ease;
+  background: #ffffff;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+.text-pink {
+  color: #ff3d6e !important;
+}
+
+.border-pink-subtle {
+  border-color: rgba(255, 61, 110, 0.2) !important;
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.1);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.fb-img-container {
+  overflow: hidden;
+  img {
+    transition: transform 0.3s ease;
+  }
+}
+
+.fb-card:hover .fb-img-container img {
+  transform: scale(1.05);
+}

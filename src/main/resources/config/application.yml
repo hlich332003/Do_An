@@ -135,7 +135,7 @@ spring:
     hibernate:
       ddl-auto: none
       naming:
-        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
   messages:
     basename: i18n/messages
@@ -199,7 +199,7 @@ jhipster:
   #   allow-credentials: true
   #   max-age: 1800
   mail:
-    from: CinemaTick@localhost
+    from: catbamaytongdai@gmail.com
   api-docs:
     default-include-pattern: /api/**
     management-include-pattern: /management/**
@@ -227,3 +227,12 @@ jhipster:
 # ===================================================================
 
 # application:
+
+vnpay:
+  tmn-code: 'DEMO1234'
+  hash-secret: 'SẼ_ĐƯỢC_CUNG_CẤP_BỞI_VNPAY'
+  url: 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
+  return-url: 'http://localhost:9000/payment-return'
+
+gemini:
+  api-key: ${GEMINI_API_KEY:}

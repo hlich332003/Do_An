@@ -1,20 +1,56 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
   <head>
-    <title th:text="#{email.activation.title}">JHipster creation</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="icon" th:href="@{|${baseUrl}/favicon.ico|}" />
+    <title>Chào mừng đến với CinemaTick</title>
   </head>
-  <body>
-    <p th:text="#{email.activation.greeting(${user.login})}">Dear</p>
-    <p th:text="#{email.creation.text1}">Your JHipster account has been created, please click on the URL below to access it:</p>
-    <p>
-      <a th:with="url=(@{|${baseUrl}/account/reset/finish?key=${user.resetKey}|})" th:href="${url}" th:text="${url}">Login link</a>
-    </p>
-    <p>
-      <span th:text="#{email.activation.text2}">Regards, </span>
-      <br />
-      <em th:text="#{email.signature}">JHipster.</em>
-    </p>
+  <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px">
+    <div
+      style="
+        max-width: 600px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      "
+    >
+      <div style="background: linear-gradient(135deg, #e50914, #b20710); padding: 30px; text-align: center">
+        <h1 style="color: #ffffff; margin: 0; font-size: 28px">🎬 CinemaTick</h1>
+        <p style="color: rgba(255, 255, 255, 0.85); margin: 8px 0 0 0">Đặt vé xem phim dễ dàng</p>
+      </div>
+      <div style="padding: 32px">
+        <p style="font-size: 16px; color: #333">
+          Xin chào
+          <strong th:text="${user.firstName != null and !#strings.isEmpty(user.firstName)} ? ${user.firstName} : ${user.login}">bạn</strong
+          >,
+        </p>
+        <p style="font-size: 15px; color: #555; line-height: 1.6">
+          🎉 Tài khoản CinemaTick của bạn đã được <strong>tạo và kích hoạt thành công</strong>! Bạn có thể đăng nhập ngay để bắt đầu đặt vé
+          xem phim.
+        </p>
+        <div style="text-align: center; margin: 32px 0">
+          <a
+            th:href="@{|${baseUrl}/login|}"
+            style="
+              background-color: #e50914;
+              color: #ffffff;
+              padding: 14px 32px;
+              border-radius: 25px;
+              text-decoration: none;
+              font-size: 16px;
+              font-weight: bold;
+              display: inline-block;
+            "
+          >
+            Đăng nhập ngay
+          </a>
+        </div>
+        <p style="font-size: 13px; color: #888; border-top: 1px solid #eee; padding-top: 16px">
+          Nếu bạn không thực hiện đăng ký này, vui lòng bỏ qua email này.
+        </p>
+        <p style="font-size: 14px; color: #555">Trân trọng,<br /><em>Đội ngũ CinemaTick</em></p>
+      </div>
+    </div>
   </body>
 </html>

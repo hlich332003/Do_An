@@ -1,0 +1,22 @@
+@if (ve) {
+  <form name="deleteForm" (ngSubmit)="confirmDelete(ve.id!)">
+    <div class="modal-header">
+      <h4 class="modal-title" data-cy="veDeleteDialogHeading">Xác nhận thao tác xóa</h4>
+    </div>
+
+    <div class="modal-body">
+      <jhi-alert-error />
+      <p id="jhi-delete-ve-heading">Bạn có chắc chắn muốn xóa Vé {{ ve.id }}?</p>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+        <fa-icon icon="ban"></fa-icon>&nbsp;<span> Hủy </span>
+      </button>
+
+      <button id="jhi-confirm-delete-ve" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
+        <fa-icon icon="times"></fa-icon>&nbsp;<span> Xóa </span>
+      </button>
+    </div>
+  </form>
+}

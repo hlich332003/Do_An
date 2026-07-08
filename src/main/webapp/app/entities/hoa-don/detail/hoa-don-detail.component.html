@@ -1,0 +1,91 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (hoaDon(); as hoaDonRef) {
+      <div>
+        <h2 data-cy="hoaDonDetailsHeading"><span>Hóa Đơn</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ hoaDonRef.id }}</span>
+          </dd>
+          <dt><span>Tổng Tiền</span></dt>
+          <dd>
+            <span>{{ hoaDonRef.tongTien }}</span>
+          </dd>
+          <dt><span>Mã Giảm Giá</span></dt>
+          <dd>
+            <span>{{ hoaDonRef.maGiamGia }}</span>
+          </dd>
+          <dt><span>Số Tiền Giảm</span></dt>
+          <dd>
+            <span>{{ hoaDonRef.soTienGiam }}</span>
+          </dd>
+          <dt><span>Phương Thức Thanh Toán</span></dt>
+          <dd>
+            <span>{{ hoaDonRef.phuongThucThanhToan }}</span>
+          </dd>
+          <dt><span>Mã Giao Dịch</span></dt>
+          <dd>
+            <span>{{ hoaDonRef.maGiaoDich }}</span>
+          </dd>
+          <dt><span>Trạng Thái</span></dt>
+          <dd>
+            <span>{{ formatStatusLabel(hoaDonRef.trangThai) }}</span>
+          </dd>
+          <dt><span>Số Vé</span></dt>
+          <dd>
+            <span class="badge bg-primary">{{ getVeCount() }}</span>
+          </dd>
+          <dt><span>Ngày Tạo</span></dt>
+          <dd>
+            <span>{{ hoaDonRef.ngayTao | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>Ngày Thanh Toán</span></dt>
+          <dd>
+            <span>{{ hoaDonRef.ngayThanhToan | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>Người Dùng</span></dt>
+          <dd>
+            <a [routerLink]="['/admin/nguoi-dung', hoaDon()!.nguoiDung?.id, 'view']">
+              {{ hoaDonRef.nguoiDung?.hoTen || 'Chưa cập nhật' }} ({{ hoaDonRef.nguoiDung?.email }})
+            </a>
+          </dd>
+        </dl>
+
+        @if (hoaDonLichSu()) {
+          <div class="card border-0 shadow-sm rounded-4 mb-3">
+            <div class="card-body">
+              <h5 class="mb-3">Vé trong hóa đơn</h5>
+              <div class="d-flex flex-wrap gap-2">
+                @for (veId of hoaDonLichSu()?.veIds ?? []; track veId) {
+                  <span class="badge rounded-pill bg-light text-dark border">#{{ veId }}</span>
+                }
+              </div>
+              <div class="text-muted small mt-2">
+                {{ hoaDonLichSu()?.danhSachGhe || 'Chưa có dữ liệu ghế' }}
+              </div>
+              <div class="text-muted small mt-1">
+                {{ hoaDonLichSu()?.danhSachCombo || 'Không có combo' }}
+              </div>
+            </div>
+          </div>
+        }
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span> Quay lại </span>
+        </button>
+
+        <button type="button" [routerLink]="['/admin/hoa-don', hoaDonRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span> Sửa </span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

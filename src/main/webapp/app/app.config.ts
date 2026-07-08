@@ -9,9 +9,12 @@ import {
   withComponentInputBinding,
   withDebugTracing,
   withNavigationErrorHandler,
+  withPreloading,
+  PreloadAllModules,
 } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 
@@ -37,6 +40,7 @@ const routerFeatures: RouterFeatures[] = [
       router.navigate(['/error']);
     }
   }),
+  withPreloading(PreloadAllModules),
 ];
 if (environment.DEBUG_INFO_ENABLED) {
   routerFeatures.push(withDebugTracing());
@@ -44,6 +48,7 @@ if (environment.DEBUG_INFO_ENABLED) {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAnimations(),
     provideRouter(routes, ...routerFeatures),
     importProvidersFrom(BrowserModule),
     // Set this to true to enable service worker (PWA)

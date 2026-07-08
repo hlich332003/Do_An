@@ -1,0 +1,97 @@
+.bg-pink {
+  background-color: #ff3d6e !important;
+}
+
+.text-pink {
+  color: #ff3d6e !important;
+}
+
+.btn-pink-gradient {
+  background: linear-gradient(135deg, #ff7a18 0%, #ff3d6e 100%) !important;
+  border: none !important;
+  color: white;
+  transition: all 0.25s ease !important;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 61, 110, 0.4) !important;
+    color: white;
+  }
+}
+
+.tracking-wider {
+  letter-spacing: 2px;
+}
+
+/* History Card Ticket Style */
+.history-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .border-secondary {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+.ticket-notch {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-color: #f8f9fa; /* Matches page background */
+  border-radius: 50%;
+  right: -12px;
+  z-index: 10;
+
+  &.notch-top {
+    top: -12px;
+  }
+
+  &.notch-bottom {
+    bottom: -12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .history-card {
+    .col-md-3 {
+      border-right: none !important;
+      border-bottom: 2px dashed rgba(255, 255, 255, 0.2);
+      padding: 20px !important;
+
+      .ticket-notch {
+        right: auto;
+        bottom: -12px;
+
+        &.notch-top {
+          left: -12px;
+          top: auto;
+        }
+
+        &.notch-bottom {
+          right: -12px;
+        }
+      }
+    }
+  }
+}
+
+.btn-outline-pink {
+  color: #ff3d6e;
+  border-color: #ff3d6e;
+  background-color: transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: white;
+    background-color: #ff3d6e;
+    border-color: #ff3d6e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(255, 61, 110, 0.2);
+  }
+}

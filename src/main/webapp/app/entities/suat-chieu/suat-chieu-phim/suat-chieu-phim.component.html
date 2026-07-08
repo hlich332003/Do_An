@@ -1,0 +1,57 @@
+<div class="showtimes-container mt-3">
+  <div *ngIf="groupedShowtimes.length === 0" class="alert alert-light text-center py-4 border-0 shadow-sm rounded-4">
+    <fa-icon icon="calendar-times" class="text-muted mb-3" style="font-size: 3rem"></fa-icon>
+    <h5 class="text-muted fw-bold">Rất tiếc, không có suất chiếu nào.</h5>
+    <p class="text-muted mb-0">Vui lòng chọn một ngày khác hoặc thay đổi bộ lọc.</p>
+  </div>
+
+  <div *ngIf="groupedShowtimes.length > 0">
+    <div class="card border-0 shadow-sm rounded-4 mb-3 overflow-hidden movie-card" *ngFor="let movie of groupedShowtimes">
+      <div class="row g-0">
+        <!-- Cột Ảnh Poster -->
+        <div class="col-md-2 col-lg-2 bg-dark d-none d-md-block position-relative movie-poster-col">
+          <img
+            [src]="movie.poster || 'content/images/no-product-image.png'"
+            (error)="onImageError($event)"
+            class="img-fluid h-100 w-100"
+            style="object-fit: cover; opacity: 0.8"
+            alt="Movie Poster"
+          />
+          <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-dark"></div>
+        </div>
+
+        <!-- Cột Nội dung -->
+        <div class="col-md-10 col-lg-10 p-3 p-lg-4">
+          <div class="d-flex align-items-center mb-2 flex-wrap gap-2">
+            <span class="badge bg-danger rounded-pill px-2 py-1">2D</span>
+            <span class="badge bg-warning text-dark rounded-pill px-2 py-1 fw-bold">T16</span>
+            <h5 class="fw-bold mb-0 text-dark movie-title">{{ movie.movieName }}</h5>
+          </div>
+
+          <hr class="text-muted opacity-25" />
+
+          <!-- Danh sách rạp & giờ chiếu -->
+          <div class="cinema-group mb-3" *ngFor="let cinema of movie.cinemas; let i = index">
+            <h6 class="fw-bold text-secondary mb-2">
+              <fa-icon icon="map-marker-alt" class="me-2 text-danger"></fa-icon>{{ cinema.cinemaName }}
+            </h6>
+
+            <div class="room-group ms-2 ms-md-4 mb-2" *ngFor="let room of cinema.rooms">
+              <p class="fw-bold text-muted small mb-2 room-title">{{ room.roomName }}</p>
+
+              <div class="d-flex flex-wrap gap-2 time-list">
+                <a
+                  *ngFor="let suat of room.showtimes"
+                  [routerLink]="getBookingLink(suat.id)"
+                  class="btn btn-outline-secondary fw-bold rounded-pill px-3 py-1 time-btn"
+                >
+                  {{ suat.thoiGianBatDau?.format('HH:mm') }}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

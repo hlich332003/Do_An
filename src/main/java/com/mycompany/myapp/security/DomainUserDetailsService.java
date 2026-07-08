@@ -1,8 +1,7 @@
 package com.mycompany.myapp.security;
 
-import com.mycompany.myapp.domain.Authority;
-import com.mycompany.myapp.domain.User;
-import com.mycompany.myapp.repository.UserRepository;
+import com.mycompany.myapp.domain.NguoiDung;
+import com.mycompany.myapp.repository.NguoiDungRepository;
 import java.util.*;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.slf4j.Logger;
@@ -23,10 +22,10 @@ public class DomainUserDetailsService implements UserDetailsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DomainUserDetailsService.class);
 
-    private final UserRepository userRepository;
+    private final NguoiDungRepository nguoiDungRepository;
 
-    public DomainUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public DomainUserDetailsService(NguoiDungRepository nguoiDungRepository) {
+        this.nguoiDungRepository = nguoiDungRepository;
     }
 
     @Override
@@ -34,25 +33,21 @@ public class DomainUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(final String login) {
         LOG.debug("Authenticating {}", login);
 
-        if (new EmailValidator().isValid(login, null)) {
-            return userRepository
-                .findOneWithAuthoritiesByEmailIgnoreCase(login)
-                .map(user -> createSpringSecurityUser(login, user))
-                .orElseThrow(() -> new UsernameNotFoundException("User with email " + login + " was not found in the database"));
-        }
-
-        String lowercaseLogin = login.toLowerCase(Locale.ENGLISH);
-        return userRepository
-            .findOneWithAuthoritiesByLogin(lowercaseLogin)
-            .map(user -> createSpringSecurityUser(lowercaseLogin, user))
-            .orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database"));
+        return nguoiDungRepository
+            .findOneByEmailIgnoreCaseOrSoDienThoai(login, login)
+            .map(user -> createSpringSecurityUser(login, user))
+            .orElseThrow(() -> new UsernameNotFoundException("User " + login + " was not found in the database"));
     }
 
-    private org.springframework.security.core.userdetails.User createSpringSecurityUser(String lowercaseLogin, User user) {
-        if (!user.isActivated()) {
-            throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
+    private org.springframework.security.core.userdetails.User createSpringSecurityUser(String lowercaseLogin, NguoiDung user) {
+        String status = user.getTrangThai();
+        if (status != null) {
+            String upper = status.trim().toUpperCase();
+            if (upper.equals("0") || upper.equals("BLOCKED") || upper.equals("LOCKED") || upper.contains("KHOA")) {
+                throw new UserNotActivatedException("Tài khoản của bạn đã bị khóa.");
+            }
         }
-        return UserWithId.fromUser(user);
+        return UserWithId.fromNguoiDung(user);
     }
 
     public static class UserWithId extends org.springframework.security.core.userdetails.User {
@@ -78,13 +73,14 @@ public class DomainUserDetailsService implements UserDetailsService {
             return super.hashCode();
         }
 
-        public static UserWithId fromUser(User user) {
-            return new UserWithId(
-                user.getLogin(),
-                user.getPassword(),
-                user.getAuthorities().stream().map(Authority::getName).map(SimpleGrantedAuthority::new).toList(),
-                user.getId()
-            );
+        public static UserWithId fromNguoiDung(NguoiDung user) {
+            List<SimpleGrantedAuthority> auths = new ArrayList<>();
+            if (user.getVaiTro() != null && !user.getVaiTro().trim().isEmpty()) {
+                auths.add(new SimpleGrantedAuthority(user.getVaiTro().trim()));
+            } else {
+                auths.add(new SimpleGrantedAuthority("ROLE_USER"));
+            }
+            return new UserWithId(user.getEmail(), user.getMatKhau(), auths, user.getId());
         }
     }
 }

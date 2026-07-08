@@ -1,0 +1,37 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084852"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "entityTableName": "dich_vu_fb",
+  "fields": [
+    {
+      "fieldName": "tenCombo",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "moTa",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "gia",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "hinhAnh",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "trangThai",
+      "fieldType": "String"
+    }
+  ],
+  "name": "DichVuFB",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

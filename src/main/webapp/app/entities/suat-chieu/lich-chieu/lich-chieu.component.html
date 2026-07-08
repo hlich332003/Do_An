@@ -1,0 +1,122 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="fw-bold mb-0 text-uppercase border-bottom border-3 border-danger d-inline-block pb-2" style="font-size: 1.6rem">
+      {{ isCashierMode ? 'Bán Vé Tại Quầy' : 'Lịch Chiếu Phim' }}
+    </h2>
+  </div>
+
+  <div class="row mb-3 g-2">
+    <div class="col-12 col-md-3 col-xl-3">
+      <label class="form-label small fw-semibold mb-1">Phim</label>
+      <div class="movie-filter-box">
+        <div class="input-group input-group-sm movie-filter-search">
+          <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+          <input
+            id="lichChieuPhim"
+            list="lichChieuPhimSuggestions"
+            class="form-control"
+            type="text"
+            placeholder="Tìm và chọn phim"
+            [(ngModel)]="phimFilterText"
+            (ngModelChange)="onPhimFilterChange()"
+          />
+          <button class="btn btn-outline-secondary" type="button" (click)="clearPhimFilter()" [disabled]="!phimFilterText">×</button>
+        </div>
+        <datalist id="lichChieuPhimSuggestions">
+          @for (phim of phims; track phim.id) {
+            <option [value]="phim.tenPhim"></option>
+          }
+        </datalist>
+      </div>
+    </div>
+    <div class="col-6 col-md-2 col-xl-2">
+      <label class="form-label small fw-semibold mb-1">Phòng</label>
+      <div class="input-group input-group-sm">
+        <select class="form-select shadow-sm" [(ngModel)]="phongChieuId" (change)="onFilterChange()">
+          <option [ngValue]="null">Tất cả phòng</option>
+          <option *ngFor="let phong of phongChieus" [ngValue]="phong.id">{{ phong.tenPhong }}</option>
+        </select>
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          (click)="selectRoom(null)"
+          [disabled]="phongChieuId === null"
+          title="Xóa phòng"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 col-xl-3">
+      <label class="form-label small fw-semibold mb-1">Tìm nhanh</label>
+      <input
+        list="lichChieuSearchSuggestions"
+        type="text"
+        class="form-control form-control-sm shadow-sm"
+        placeholder="Tên phim, phòng..."
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onFilterChange()"
+        (change)="onFilterChange()"
+      />
+      <datalist id="lichChieuSearchSuggestions">
+        @for (suggestion of searchSuggestions; track suggestion) {
+          <option [value]="suggestion"></option>
+        }
+      </datalist>
+    </div>
+    <div class="col-4 col-md-1-5 col-xl-1">
+      <label class="form-label small fw-semibold mb-1">Từ giờ</label>
+      <input type="time" class="form-control form-control-sm shadow-sm" [(ngModel)]="selectedTimeFrom" (change)="onFilterChange()" />
+    </div>
+    <div class="col-4 col-md-1-5 col-xl-1">
+      <label class="form-label small fw-semibold mb-1">Đến giờ</label>
+      <input type="time" class="form-control form-control-sm shadow-sm" [(ngModel)]="selectedTimeTo" (change)="onFilterChange()" />
+    </div>
+    <div class="col-4 col-md-1 col-xl-2 d-flex align-items-end">
+      <button class="btn btn-outline-secondary btn-sm w-100 shadow-sm" type="button" (click)="clearFilters()" style="height: 31px">
+        Xóa lọc
+      </button>
+    </div>
+  </div>
+
+  <div class="date-tabs-container mb-4 pb-2 border-bottom">
+    <ul class="nav nav-pills flex-nowrap overflow-auto" style="gap: 8px; scrollbar-width: none">
+      <li class="nav-item" *ngFor="let date of dateList">
+        <button
+          class="nav-link text-center px-3 py-2"
+          [class.active]="selectedDate && date.isSame(selectedDate, 'day')"
+          [class.bg-danger]="selectedDate && date.isSame(selectedDate, 'day')"
+          (click)="selectDate(date)"
+          style="border-radius: 8px; min-width: 90px; border: 1px solid #e1e1e1; cursor: pointer; transition: all 0.2s"
+        >
+          <div
+            class="small fw-bold text-uppercase mb-1"
+            style="font-size: 0.72rem"
+            [class.text-white]="selectedDate && date.isSame(selectedDate, 'day')"
+            [class.text-muted]="!(selectedDate && date.isSame(selectedDate, 'day'))"
+          >
+            {{ date.format('dddd') }}
+          </div>
+          <div
+            class="fw-bold"
+            style="font-size: 0.95rem"
+            [class.text-white]="selectedDate && date.isSame(selectedDate, 'day')"
+            [class.text-dark]="!(selectedDate && date.isSame(selectedDate, 'day'))"
+          >
+            {{ date.format('DD/MM') }}
+          </div>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-4">
+    <div class="spinner-border"></div>
+  </div>
+
+  <div *ngIf="!isLoading && suatChieus.length > 0">
+    <jhi-suat-chieu-phim [suatChieus]="suatChieus" [showPastShowtimes]="false"></jhi-suat-chieu-phim>
+  </div>
+
+  <div *ngIf="!isLoading && suatChieus.length === 0" class="alert alert-info">Không có suất chiếu phù hợp.</div>
+</div>

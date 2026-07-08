@@ -1,23 +1,34 @@
 @import 'bootstrap-variables';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
+@import 'cinestar-badges';
 
 /* ==============================================================
 Bootstrap tweaks
 ===============================================================*/
+
+body {
+  background-color: $body-bg !important;
+  color: $body-color;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 body,
 h1,
 h2,
 h3,
 h4 {
-  font-weight: 300;
+  font-weight: 400;
 }
 
-/* Increase contrast of links to get 100% on Lighthouse Accessibility Audit. Override this color if you want to change the link color, or use a Bootswatch theme */
 a {
-  color: #533f03;
-  font-weight: bold;
+  color: $primary;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 /* override hover color for dropdown-item forced by bootstrap to all a:not([href]):not([tabindex]) elements in _reboot.scss */
@@ -31,7 +42,7 @@ a:not([href]):not([tabindex]):hover.dropdown-item {
 }
 
 a:hover {
-  color: #533f03;
+  color: #e02f5c;
   /* make sure browsers use the pointer cursor for anchors, even with no href */
   cursor: pointer;
 }
@@ -67,9 +78,17 @@ Generic styles
 /* other generic styles */
 
 .jh-card {
-  padding: 1.5%;
-  margin-top: 20px;
+  padding: 16px;
+  margin-top: 10px;
   border: none;
+  background-color: #ffffff;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  }
 }
 
 .error {
@@ -225,12 +244,248 @@ angular-cli removes postcss-rtl processed inline css, processed rules must be ad
   transform: rotate(-45deg);
 }
 
-/* navbar.component.scss */
-.navbar {
-  ul.navbar-nav {
-    .nav-item {
-      margin-left: 0.5em;
-    }
+/* Premium Card & Header overrides for a modern bright look (inspired by BookMyShow) */
+.card {
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04) !important;
+  overflow: hidden;
+  background-color: #ffffff;
+  margin-bottom: 0.85rem;
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  padding: 16px 24px !important;
+
+  h5 {
+    font-weight: 600;
+    font-size: 1.1rem;
   }
 }
+
+.card-header.bg-dark {
+  background-color: #f8f9fa !important;
+  color: rgb(51, 53, 69) !important;
+  border-bottom: 3px solid #ff3d6e !important;
+}
+
+.card-header.bg-primary {
+  background: linear-gradient(135deg, rgb(51, 53, 69) 0%, rgb(80, 83, 107) 100%) !important;
+  color: #ffffff !important;
+}
+
+.btn {
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  &:not(.btn-sm):not(.btn-lg) {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    border-radius: 30px;
+  }
+
+  &.btn-sm {
+    padding: 6px 16px !important;
+    font-size: 0.88rem !important;
+    border-radius: 20px;
+  }
+
+  &.btn-lg {
+    padding: 14px 32px !important;
+    font-size: 1.05rem !important;
+    border-radius: 40px;
+  }
+}
+
+.btn-primary {
+  background-color: #ff3d6e !important;
+  border-color: #ff3d6e !important;
+  color: white !important;
+
+  &:hover {
+    background-color: #e02f5c !important;
+    border-color: #e02f5c !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 61, 110, 0.2);
+  }
+}
+
+.btn-outline-danger {
+  border-color: #ff3d6e !important;
+  color: #ff3d6e !important;
+  border-radius: 20px;
+
+  &:hover {
+    background-color: #ff3d6e !important;
+    color: white !important;
+  }
+}
+
+/* Premium Modals & Form inputs styling */
+.modal-content {
+  border-radius: $border-radius-lg !important;
+  border: none !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+  overflow: hidden;
+}
+
+.modal-header.bg-dark {
+  background-color: $dark !important;
+  color: #ffffff !important;
+  border-bottom: 3px solid $primary !important;
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa;
+  transition: all 0.25s ease;
+
+  &:not(.form-control-sm):not(.form-control-lg):not(.form-select-sm):not(.form-select-lg) {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+  }
+
+  &.form-control-sm,
+  &.form-select-sm {
+    padding: 6px 12px !important;
+    font-size: 0.88rem !important;
+    border-radius: 6px;
+  }
+
+  &.form-control-lg,
+  &.form-select-lg {
+    padding: 14px 20px !important;
+    font-size: 1.05rem !important;
+    border-radius: 10px;
+  }
+
+  &:focus {
+    background-color: #ffffff;
+    border-color: $primary;
+    box-shadow: 0 0 0 4px rgba(255, 61, 110, 0.15);
+  }
+}
+
+/* Base Poster styling */
+.poster-img {
+  border-radius: $border-radius-lg;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Premium Seamless Input Groups across all pages */
+.input-group {
+  border-radius: 8px !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  background-color: #f8f9fa !important;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease !important;
+  overflow: hidden;
+  align-items: stretch;
+
+  .input-group-text {
+    background-color: transparent !important;
+    border: none !important;
+    color: #6c757d !important;
+    padding-left: 14px !important;
+    padding-right: 6px !important;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-control,
+  .form-select {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 10px 12px !important;
+    color: #212529 !important;
+
+    &:focus {
+      background-color: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+  }
+
+  /* Handle small size input groups */
+  &.input-group-sm {
+    border-radius: 6px !important;
+
+    .form-control,
+    .form-select {
+      padding: 6px 10px !important;
+      font-size: 0.88rem !important;
+    }
+
+    .input-group-text {
+      padding-left: 10px !important;
+      padding-right: 4px !important;
+      font-size: 0.88rem !important;
+    }
+
+    .btn {
+      padding: 4px 12px !important;
+      font-size: 0.85rem !important;
+      height: 100% !important;
+    }
+  }
+
+  /* Handle large size input groups */
+  &.input-group-lg {
+    border-radius: 10px !important;
+
+    .form-control,
+    .form-select {
+      padding: 14px 18px !important;
+      font-size: 1.05rem !important;
+    }
+
+    .btn {
+      padding: 12px 20px !important;
+      font-size: 1.05rem !important;
+      height: 100% !important;
+    }
+  }
+
+  /* Style action buttons inside input groups */
+  .btn {
+    border-top: none !important;
+    border-bottom: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    height: 100% !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none !important;
+
+    &:first-child {
+      border-left: none !important;
+    }
+    &:last-child {
+      border-right: none !important;
+    }
+  }
+
+  /* Highlight on focus */
+  &:focus-within {
+    border-color: #ff3d6e !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 4px rgba(255, 61, 110, 0.15) !important;
+  }
+}
+
 /* jhipster-needle-scss-add-main JHipster will add new css style */

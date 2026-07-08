@@ -1,0 +1,87 @@
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <img src="content/images/logo.png" alt="CinemaTick" class="brand-logo" />
+      <div class="brand-copy">
+        <div class="brand-title">CinemaTick Admin</div>
+        <div class="brand-subtitle">Quản trị rạp chiếu phim</div>
+      </div>
+    </div>
+
+    <!-- Account Section below Brand Logo -->
+    <div
+      class="sidebar-account-section border-bottom pb-3 mb-3"
+      *ngIf="account() as acc"
+      style="border-color: rgba(255, 255, 255, 0.08) !important"
+    >
+      <div class="nav-item-dropdown">
+        <a class="nav-link d-flex align-items-center justify-content-between" (click)="toggleAccountMenu()" style="cursor: pointer">
+          <div class="d-flex align-items-center gap-2 text-truncate">
+            <fa-icon icon="user" class="text-warning"></fa-icon>
+            <span class="fw-semibold text-truncate text-white" style="max-width: 160px" [title]="acc.login">{{ acc.login }}</span>
+          </div>
+          <fa-icon [icon]="isAccountMenuOpen ? 'chevron-up' : 'chevron-down'" class="small text-white-50"></fa-icon>
+        </a>
+        <div class="sidebar-submenu" [class.show]="isAccountMenuOpen">
+          <a class="nav-link submenu-link" routerLink="/account/password" routerLinkActive="active">
+            <fa-icon icon="key"></fa-icon>
+            <span>Đổi mật khẩu</span>
+          </a>
+          <a class="nav-link submenu-link text-danger" (click)="logout()" style="cursor: pointer">
+            <fa-icon icon="sign-out-alt"></fa-icon>
+            <span>Đăng xuất</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-content flex-grow-1">
+      <div class="sidebar-section">Điều hướng</div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <fa-icon icon="tachometer-alt"></fa-icon>
+          <span>Bảng điều khiển</span>
+        </a>
+        <a class="nav-link" routerLink="/admin/phim" routerLinkActive="active">
+          <fa-icon icon="video"></fa-icon>
+          <span>Quản lý phim</span>
+        </a>
+        <a class="nav-link" routerLink="/admin/phong-chieu" routerLinkActive="active">
+          <fa-icon icon="door-open"></fa-icon>
+          <span>Quản lý phòng chiếu</span>
+        </a>
+        <a class="nav-link" routerLink="/admin/suat-chieu" routerLinkActive="active">
+          <fa-icon icon="calendar-alt"></fa-icon>
+          <span>Quản lý suất chiếu</span>
+        </a>
+        <a class="nav-link" routerLink="/admin/ban-ve" routerLinkActive="active">
+          <fa-icon icon="ticket-alt"></fa-icon>
+          <span>Bán vé tại quầy</span>
+        </a>
+        <a class="nav-link" routerLink="/admin/dich-vu-fb" routerLinkActive="active">
+          <fa-icon icon="hamburger"></fa-icon>
+          <span>Quản lý dịch vụ F&amp;B</span>
+        </a>
+        <a class="nav-link" routerLink="/admin/hoa-don" routerLinkActive="active">
+          <fa-icon icon="ticket-alt"></fa-icon>
+          <span>Quản lý đặt vé</span>
+        </a>
+        <a class="nav-link" routerLink="/admin/nguoi-dung" routerLinkActive="active">
+          <fa-icon icon="users"></fa-icon>
+          <span>Quản lý người dùng</span>
+        </a>
+      </nav>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <main class="admin-content">
+      <div class="admin-surface">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+
+  <jhi-chatbot />
+</div>

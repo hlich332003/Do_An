@@ -1,0 +1,41 @@
+.showtimes-container {
+  .movie-card {
+    border: 1px solid rgba(15, 23, 42, 0.06);
+  }
+
+  .movie-poster-col {
+    min-height: 240px;
+  }
+
+  .movie-title {
+    font-size: 1.15rem;
+  }
+
+  .room-title {
+    font-size: 0.9rem;
+  }
+
+  .time-list {
+    gap: 0.5rem !important;
+  }
+
+  .time-btn {
+    border-color: #d1d5db;
+    color: #4b5563;
+    transition: all 0.2s ease-in-out;
+    background-color: transparent;
+    min-width: 74px;
+
+    &:hover {
+      background-color: #ef4444;
+      border-color: #ef4444;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+    }
+  }
+
+  .bg-gradient-dark {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
+  }
+}

@@ -1,0 +1,65 @@
+.movie-filter-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-filter-search {
+  flex-wrap: nowrap;
+  align-items: stretch;
+
+  .input-group-text {
+    border-right: 0;
+    border-radius: 0.65rem 0 0 0.65rem;
+    color: #64748b;
+  }
+
+  .form-control {
+    border-left: 0;
+    border-right: 0;
+    box-shadow: none;
+  }
+
+  .btn-outline-primary {
+    border-radius: 0;
+    min-width: 70px;
+    font-weight: 600;
+  }
+
+  .btn-outline-secondary {
+    border-radius: 0 999px 999px 0;
+    min-width: 40px;
+    padding-inline: 0.75rem;
+  }
+}
+
+.selected-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.selected-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgba(100, 116, 139, 0.4);
+  border-radius: 999px;
+  background: #fff;
+  color: #334155;
+  font-size: 0.84rem;
+
+  button {
+    border: 0;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+
+    &:hover {
+      color: #ef4444;
+    }
+  }
+}

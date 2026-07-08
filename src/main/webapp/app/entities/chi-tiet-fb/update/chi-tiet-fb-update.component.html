@@ -1,0 +1,87 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-chi-tiet-fb-heading" data-cy="ChiTietFBCreateUpdateHeading">Thêm mới hoặc Cập nhật Chi Tiết F&B</h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let soLuongRef = editForm.get('soLuong')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_soLuong">Số Lượng</label>
+          <input type="number" class="form-control" name="soLuong" id="field_soLuong" data-cy="soLuong" formControlName="soLuong" />
+          @if (soLuongRef.invalid && (soLuongRef.dirty || soLuongRef.touched)) {
+            <div>
+              @if (editForm.get('soLuong')?.errors?.required) {
+                <small class="form-text text-danger">Trường này là bắt buộc.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('soLuong')?.errors?.number">Trường này phải là một số.</small>
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_giaBan">Giá Bán</label>
+          <input type="number" class="form-control" name="giaBan" id="field_giaBan" data-cy="giaBan" formControlName="giaBan" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dichVuFB">Dịch Vụ F&B</label>
+          <select
+            class="form-control"
+            id="field_dichVuFB"
+            data-cy="dichVuFB"
+            name="dichVuFB"
+            formControlName="dichVuFB"
+            [compareWith]="compareDichVuFB"
+          >
+            <option [ngValue]="null"></option>
+            @for (dichVuFBOption of dichVuFBSSharedCollection; track $index) {
+              <option [ngValue]="dichVuFBOption">{{ dichVuFBOption.tenCombo }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_hoaDon">Hóa Đơn</label>
+          <select
+            class="form-control"
+            id="field_hoaDon"
+            data-cy="hoaDon"
+            name="hoaDon"
+            formControlName="hoaDon"
+            [compareWith]="compareHoaDon"
+          >
+            <option [ngValue]="null"></option>
+            @for (hoaDonOption of hoaDonsSharedCollection; track $index) {
+              <option [ngValue]="hoaDonOption">{{ hoaDonOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span> Hủy </span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span> Lưu </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

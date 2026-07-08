@@ -1,0 +1,42 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084854"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "tenPhong",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "soLuongGhe",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "trangThai",
+      "fieldType": "String"
+    }
+  ],
+  "name": "PhongChieu",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "suatChieu",
+      "otherEntityRelationshipName": "phongChieu",
+      "relationshipName": "suatChieu",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "ghe",
+      "otherEntityRelationshipName": "phongChieu",
+      "relationshipName": "ghe",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

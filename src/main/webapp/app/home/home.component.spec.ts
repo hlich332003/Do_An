@@ -1,11 +1,14 @@
 jest.mock('app/core/auth/account.service');
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Subject, of } from 'rxjs';
 
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
+import { PhimService } from 'app/entities/phim/service/phim.service';
+import { IPhim } from 'app/entities/phim/phim.model';
 
 import HomeComponent from './home.component';
 
@@ -13,6 +16,7 @@ describe('Home Component', () => {
   let comp: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let mockAccountService: AccountService;
+  let mockPhimService: PhimService;
   let mockRouter: Router;
   const account: Account = {
     activated: true,
@@ -24,11 +28,27 @@ describe('Home Component', () => {
     login: 'login',
     imageUrl: null,
   };
+  const phims: IPhim[] = [
+    {
+      id: 1,
+      tenPhim: 'Phim 1',
+      poster: 'poster-1.jpg',
+      backdrop: 'backdrop-1.jpg',
+    } as IPhim,
+  ];
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [HomeComponent],
-      providers: [AccountService],
+      providers: [
+        AccountService,
+        {
+          provide: PhimService,
+          useValue: {
+            query: jest.fn(() => of(new HttpResponse({ body: phims }))),
+          },
+        },
+      ],
     })
       .overrideTemplate(HomeComponent, '')
       .compileComponents();
@@ -40,6 +60,7 @@ describe('Home Component', () => {
     mockAccountService = TestBed.inject(AccountService);
     mockAccountService.identity = jest.fn(() => of(null));
     mockAccountService.getAuthenticationState = jest.fn(() => of(null));
+    mockPhimService = TestBed.inject(PhimService);
 
     mockRouter = TestBed.inject(Router);
     jest.spyOn(mockRouter, 'navigate').mockImplementation(() => Promise.resolve(true));
@@ -105,6 +126,18 @@ describe('Home Component', () => {
 
       // THEN
       expect(comp.account()).toEqual(account);
+    });
+
+    it('should load featured phims', () => {
+      // WHEN
+      comp.ngOnInit();
+
+      // THEN
+      expect(mockPhimService.query).toHaveBeenCalledWith({
+        size: 4,
+        sort: ['id,desc'],
+      });
+      expect(comp.phims()).toEqual(phims);
     });
   });
 });

@@ -1,0 +1,95 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-ve-heading" data-cy="VeCreateUpdateHeading">Thêm mới hoặc Cập nhật Vé</h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let maVeRef = editForm.get('maVe')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_maVe">Mã Vé</label>
+          <input type="text" class="form-control" name="maVe" id="field_maVe" data-cy="maVe" formControlName="maVe" />
+          @if (maVeRef.invalid && (maVeRef.dirty || maVeRef.touched)) {
+            <div>
+              @if (editForm.get('maVe')?.errors?.required) {
+                <small class="form-text text-danger">Trường này là bắt buộc.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_giaVe">Giá Vé</label>
+          <input type="number" class="form-control" name="giaVe" id="field_giaVe" data-cy="giaVe" formControlName="giaVe" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_trangThai">Trạng Thái</label>
+          <select class="form-control" name="trangThai" id="field_trangThai" data-cy="trangThai" formControlName="trangThai">
+            <option value="Đã Đặt">Đã Đặt</option>
+            <option value="Đã Thanh Toán">Đã Thanh Toán</option>
+            <option value="Đã Hủy">Đã Hủy</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_hoaDon">Hóa Đơn</label>
+          <select
+            class="form-control"
+            id="field_hoaDon"
+            data-cy="hoaDon"
+            name="hoaDon"
+            formControlName="hoaDon"
+            [compareWith]="compareHoaDon"
+          >
+            <option [ngValue]="null"></option>
+            @for (hoaDonOption of hoaDonsSharedCollection; track $index) {
+              <option [ngValue]="hoaDonOption">{{ hoaDonOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_suatChieu">Suất Chiếu</label>
+          <select
+            class="form-control"
+            id="field_suatChieu"
+            data-cy="suatChieu"
+            name="suatChieu"
+            formControlName="suatChieu"
+            [compareWith]="compareSuatChieu"
+          >
+            <option [ngValue]="null"></option>
+            @for (suatChieuOption of suatChieusSharedCollection; track $index) {
+              <option [ngValue]="suatChieuOption">{{ suatChieuOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span> Hủy </span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span> Lưu </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

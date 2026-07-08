@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20260615093000-1" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="ghe" columnName="ve_id"/>
+        </preConditions>
+
+        <addColumn tableName="ve">
+            <column name="ghe_id" type="bigint"/>
+        </addColumn>
+
+        <sql>
+            UPDATE ve
+            SET ghe_id = (
+                SELECT g.id
+                FROM ghe g
+                WHERE g.ve_id = ve.id
+            )
+            WHERE ghe_id IS NULL;
+        </sql>
+
+        <addForeignKeyConstraint baseColumnNames="ghe_id"
+                                 baseTableName="ve"
+                                 constraintName="fk_ve__ghe_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="ghe"/>
+
+        <dropForeignKeyConstraint baseTableName="ghe" constraintName="fk_ghe__ve_id"/>
+        <dropUniqueConstraint tableName="ghe" constraintName="ux_ghe__ve_id"/>
+        <dropColumn tableName="ghe" columnName="ve_id"/>
+    </changeSet>
+
+</databaseChangeLog>

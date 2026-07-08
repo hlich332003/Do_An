@@ -16,10 +16,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import tech.jhipster.config.DefaultProfileUtil;
 import tech.jhipster.config.JHipsterConstants;
 
 @SpringBootApplication
+@EnableScheduling
 @EnableConfigurationProperties({ LiquibaseProperties.class, ApplicationProperties.class })
 public class CinemaTickApp {
 
@@ -34,9 +36,11 @@ public class CinemaTickApp {
     /**
      * Initializes CinemaTick.
      * <p>
-     * Spring profiles can be configured with a program argument --spring.profiles.active=your-active-profile
+     * Spring profiles can be configured with a program argument
+     * --spring.profiles.active=your-active-profile
      * <p>
-     * You can find more information on how profiles work with JHipster on <a href="https://www.jhipster.tech/profiles/">https://www.jhipster.tech/profiles/</a>.
+     * You can find more information on how profiles work with JHipster on <a href=
+     * "https://www.jhipster.tech/profiles/">https://www.jhipster.tech/profiles/</a>.
      */
     @PostConstruct
     public void initApplication() {
@@ -74,7 +78,9 @@ public class CinemaTickApp {
     private static void logApplicationStartup(Environment env) {
         String protocol = Optional.ofNullable(env.getProperty("server.ssl.key-store")).map(key -> "https").orElse("http");
         String applicationName = env.getProperty("spring.application.name");
-        String serverPort = env.getProperty("server.port");
+        String serverPort = Optional.ofNullable(env.getProperty("local.server.port")).orElse(
+            Optional.ofNullable(env.getProperty("server.port")).orElse("8080")
+        );
         String contextPath = Optional.ofNullable(env.getProperty("server.servlet.context-path"))
             .filter(StringUtils::isNotBlank)
             .orElse("/");
@@ -84,25 +90,26 @@ public class CinemaTickApp {
         } catch (UnknownHostException e) {
             LOG.warn("The host name could not be determined, using `localhost` as fallback");
         }
-        LOG.info(
-            CRLFLogConverter.CRLF_SAFE_MARKER,
+        String profiles = Arrays.toString(env.getActiveProfiles().length == 0 ? env.getDefaultProfiles() : env.getActiveProfiles());
+        String startupMessage =
             """
 
             ----------------------------------------------------------
-            \tApplication '{}' is running! Access URLs:
-            \tLocal: \t\t{}://localhost:{}{}
-            \tExternal: \t{}://{}:{}{}
-            \tProfile(s): \t{}
-            ----------------------------------------------------------""",
-            applicationName,
-            protocol,
-            serverPort,
-            contextPath,
-            protocol,
-            hostAddress,
-            serverPort,
-            contextPath,
-            env.getActiveProfiles().length == 0 ? env.getDefaultProfiles() : env.getActiveProfiles()
-        );
+            \tApplication '%s' is running! Access URLs:
+            \tLocal: \t\t%s://localhost:%s%s
+            \tExternal: \t%s://%s:%s%s
+            \tProfile(s): \t%s
+            ----------------------------------------------------------""".formatted(
+                    applicationName,
+                    protocol,
+                    serverPort,
+                    contextPath,
+                    protocol,
+                    hostAddress,
+                    serverPort,
+                    contextPath,
+                    profiles
+                );
+        LOG.info(CRLFLogConverter.CRLF_SAFE_MARKER, startupMessage);
     }
 }

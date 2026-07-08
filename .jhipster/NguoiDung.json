@@ -1,0 +1,56 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084851"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "hoTen",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "matKhau",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "soDienThoai",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "diaChi",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "diemTichLuy",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "vaiTro",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "trangThai",
+      "fieldType": "String"
+    }
+  ],
+  "name": "NguoiDung",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "hoaDon",
+      "otherEntityRelationshipName": "nguoiDung",
+      "relationshipName": "hoaDon",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

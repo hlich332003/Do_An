@@ -1,0 +1,52 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084858"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "maVe",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "giaVe",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "trangThai",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Ve",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "hoaDon",
+      "otherEntityRelationshipName": "ve",
+      "relationshipName": "hoaDon",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "maGhe",
+      "otherEntityName": "ghe",
+      "otherEntityRelationshipName": "ve",
+      "relationshipName": "ghe",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "suatChieu",
+      "otherEntityRelationshipName": "ve",
+      "relationshipName": "suatChieu",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

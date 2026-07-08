@@ -1,0 +1,59 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084853"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "tenPhim",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "moTa",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "thoiLuong",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "daoDien",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dienVien",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "theLoai",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "ngayKhoiChieu",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "poster",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "trailer",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Phim",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "suatChieu",
+      "otherEntityRelationshipName": "phim",
+      "relationshipName": "suatChieu",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

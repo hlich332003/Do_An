@@ -7,10 +7,13 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/cinematick?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-      - SPRING_LIQUIBASE_URL=jdbc:mysql://mysql:3306/cinematick?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://mssql:1433;databaseName=CinemaTick;trustServerCertificate=true;encrypt=false;
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=YourPassword123!
+      - SPRING_LIQUIBASE_URL=jdbc:sqlserver://mssql:1433;databaseName=CinemaTick;trustServerCertificate=true;encrypt=false;
       - JHIPSTER_CACHE_REDIS_SERVER=redis://redis:6379
       - JHIPSTER_CACHE_REDIS_CLUSTER=false
+      - SPRING_RABBITMQ_HOST=rabbitmq
     ports:
       - 127.0.0.1:8080:8080
     healthcheck:
@@ -23,13 +26,61 @@ services:
       timeout: 5s
       retries: 40
     depends_on:
-      mysql:
+      mssql:
         condition: service_healthy
-  mysql:
+      db-init:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+  mssql:
     extends:
-      file: ./mysql.yml
-      service: mysql
+      file: ./mssql.yml
+      service: mssql
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: cinematick-db-init
+    depends_on:
+      mssql:
+        condition: service_healthy
+    volumes:
+      - ../../../:/usr/src/app
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Copying database.sql to container local disk..."
+        cp /usr/src/app/database.sql /tmp/database.sql
+        echo "Creating database..."
+        /opt/mssql-tools18/bin/sqlcmd -S mssql -U sa -P "YourPassword123!" -Q "CREATE DATABASE CinemaTick" -C
+        echo "Importing database..."
+        /opt/mssql-tools18/bin/sqlcmd -S mssql -U sa -P "YourPassword123!" -d CinemaTick -i /tmp/database.sql -C
+        echo "Import completed successfully."
   redis:
     extends:
       file: ./redis.yml
       service: redis
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: cinematick-rabbitmq
+    ports:
+      - '127.0.0.1:5672:5672'
+      - '127.0.0.1:15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'rabbitmqctl', 'status']
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  redis_data:
+    driver: local
+  mssql_data:
+    driver: local
+  rabbitmq_data:
+    driver: local

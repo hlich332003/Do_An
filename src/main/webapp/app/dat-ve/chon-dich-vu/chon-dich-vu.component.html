@@ -1,0 +1,55 @@
+<div class="fb-container">
+  <div class="row g-4">
+    <div class="col-md-6 mb-3" *ngFor="let combo of dichVuFBs">
+      <div class="card h-100 fb-card border-0 shadow-sm rounded-4 overflow-hidden position-relative">
+        <div class="row g-0 h-100">
+          <!-- Image -->
+          <div class="col-4 fb-img-container bg-light position-relative d-flex align-items-center justify-content-center border-end">
+            <img
+              *ngIf="combo.hinhAnh"
+              [src]="combo.hinhAnh"
+              [alt]="combo.tenCombo"
+              class="img-fluid"
+              style="object-fit: cover; height: 100%"
+            />
+            <div *ngIf="!combo.hinhAnh" class="text-muted opacity-50">
+              <fa-icon icon="popcorn" class="fa-3x"></fa-icon>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="col-8">
+            <div class="card-body d-flex flex-column h-100 p-3">
+              <h5 class="card-title fw-bold text-dark mb-1 fs-6">{{ combo.tenCombo }}</h5>
+              <p class="card-text text-muted small flex-grow-1 mb-2">{{ combo.moTa }}</p>
+
+              <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top border-light">
+                <span class="fw-bold text-pink fs-6">{{ combo.gia | number: '1.0-0' }} đ</span>
+
+                <!-- Quantity Control -->
+                <div class="fb-quantity-control bg-light rounded-pill d-flex align-items-center px-1 shadow-sm border" style="height: 32px">
+                  <button
+                    class="btn btn-sm btn-icon text-muted p-0"
+                    style="width: 28px; height: 28px; border-radius: 50%"
+                    (click)="decreaseQuantity(combo)"
+                    [disabled]="combo.soLuong === 0"
+                  >
+                    <fa-icon icon="minus" class="small"></fa-icon>
+                  </button>
+                  <span class="mx-2 fw-bold text-dark" style="min-width: 16px; text-align: center">{{ combo.soLuong || 0 }}</span>
+                  <button
+                    class="btn btn-sm btn-icon text-pink bg-white p-0 shadow-sm border border-pink-subtle"
+                    style="width: 28px; height: 28px; border-radius: 50%"
+                    (click)="increaseQuantity(combo)"
+                  >
+                    <fa-icon icon="plus" class="small"></fa-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

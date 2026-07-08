@@ -1,0 +1,103 @@
+<div class="ticket-result-page py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div *ngIf="isLoading" class="text-center py-5">
+          <div class="spinner-border text-pink" role="status" style="width: 3rem; height: 3rem"></div>
+          <p class="mt-3 text-muted fw-bold">Đang xuất vé...</p>
+        </div>
+
+        <div *ngIf="!isLoading && paymentStatus === 'success' && chiTiet" class="ticket-wrapper">
+          <!-- Top portion: Status -->
+          <div class="ticket-status bg-pink-gradient text-white text-center py-4 rounded-top-4 position-relative">
+            <div
+              class="success-icon-wrap bg-white text-pink rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 shadow-lg"
+              style="width: 70px; height: 70px"
+            >
+              <fa-icon icon="check" class="fa-2x"></fa-icon>
+            </div>
+            <h3 class="fw-bold m-0 letter-spacing-1">{{ isCashierMode ? 'BÁN VÉ THÀNH CÔNG!' : 'ĐẶT VÉ THÀNH CÔNG!' }}</h3>
+            <p class="text-white-50 m-0 mt-1 small">Mã HĐ: #{{ chiTiet.id }}</p>
+
+            <!-- Cutout holes for ticket effect -->
+            <div class="ticket-hole left-hole"></div>
+            <div class="ticket-hole right-hole"></div>
+          </div>
+
+          <!-- Middle portion: Movie details -->
+          <div class="ticket-details bg-white p-4 pb-3 border-start border-end border-light">
+            <h4 class="fw-bold text-dark mb-1">{{ chiTiet.tenPhim }}</h4>
+            <p class="text-muted small mb-4 border-bottom pb-3">
+              <fa-icon icon="calendar-alt" class="me-2"></fa-icon>{{ chiTiet.gioChieu | date: 'HH:mm - dd/MM/yyyy' }}
+            </p>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <span class="d-block text-muted small text-uppercase fw-semibold mb-1">Rạp chiếu</span>
+                <span class="fw-bold text-dark fs-6">{{ chiTiet.tenRap }}</span>
+              </div>
+              <div class="col-6">
+                <span class="d-block text-muted small text-uppercase fw-semibold mb-1">Phòng chiếu</span>
+                <span class="fw-bold text-dark fs-6">{{ chiTiet.tenPhongChieu }}</span>
+              </div>
+              <div class="col-6">
+                <span class="d-block text-muted small text-uppercase fw-semibold mb-1">Ghế ngồi</span>
+                <span class="fw-bold text-pink fs-6">{{ chiTiet.danhSachGhe }}</span>
+              </div>
+              <div class="col-6">
+                <span class="d-block text-muted small text-uppercase fw-semibold mb-1">Tổng tiền</span>
+                <span class="fw-bold text-dark fs-6">{{ chiTiet.tongTien | number: '1.0-0' }} đ</span>
+              </div>
+            </div>
+
+            <!-- Services if any -->
+            <div class="mb-2" *ngIf="chiTiet.danhSachCombo">
+              <span class="d-block text-muted small text-uppercase fw-semibold mb-1">Dịch vụ đính kèm</span>
+              <span class="fw-bold text-dark small">{{ chiTiet.danhSachCombo }}</span>
+            </div>
+          </div>
+
+          <!-- Dashed divider -->
+          <div class="ticket-divider bg-white border-start border-end border-light position-relative">
+            <div class="dashed-line"></div>
+            <div class="ticket-hole left-hole"></div>
+            <div class="ticket-hole right-hole"></div>
+          </div>
+
+          <!-- Bottom portion: QR Code -->
+          <div class="ticket-qr bg-white text-center p-4 rounded-bottom-4 border-start border-end border-bottom border-light">
+            <div class="qr-code-container d-inline-block bg-white p-2 border rounded-3 mb-3 shadow-sm" *ngIf="qrCodeUrl">
+              <img [src]="qrCodeUrl" alt="Mã QR vé" class="img-fluid" style="width: 160px; height: 160px" />
+            </div>
+            <p class="text-muted small m-0 fw-semibold">
+              {{ isCashierMode ? 'Vui lòng in vé hoặc đưa mã QR này cho khách hàng.' : 'Vui lòng đưa mã QR này cho nhân viên tại quầy.' }}
+            </p>
+            <p class="text-dark fw-bold fs-5 mt-1 letter-spacing-1">{{ chiTiet.maVe }}</p>
+          </div>
+        </div>
+
+        <div
+          *ngIf="!isLoading && paymentStatus === 'success' && bookingNotFound"
+          class="bg-white rounded-4 shadow-sm p-4 p-lg-5 text-center"
+        >
+          <h3 class="fw-bold text-danger mb-3">Không tìm thấy hóa đơn</h3>
+          <p class="text-muted mb-0">Hệ thống không tìm được đơn đặt vé tương ứng với mã hóa đơn đã truyền sang.</p>
+        </div>
+
+        <div *ngIf="!isLoading && paymentStatus === 'failed'" class="bg-white rounded-4 shadow-sm p-4 p-lg-5 text-center">
+          <h3 class="fw-bold text-danger mb-3">Thanh toán chưa thành công</h3>
+          <p class="text-muted mb-0">
+            {{ paymentMessage || 'Giao dịch chưa hoàn tất. Bạn có thể quay lại để chọn ghế và thanh toán lại.' }}
+          </p>
+        </div>
+
+        <div class="text-center mt-5" *ngIf="!isLoading">
+          <a *ngIf="!isCashierMode" routerLink="/" class="btn btn-outline-dark rounded-pill px-5 py-2 fw-bold">Trở về Trang chủ</a>
+          <a *ngIf="isCashierMode" routerLink="/admin/ban-ve" class="btn btn-outline-dark rounded-pill px-5 py-2 fw-bold"
+            >Tiếp tục bán vé</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

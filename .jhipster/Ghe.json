@@ -1,0 +1,51 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084855"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "maGhe",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "hang",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "cot",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "loaiGhe",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "trangThai",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Ghe",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "ve",
+      "otherEntityRelationshipName": "ghe",
+      "relationshipName": "ve",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityField": "tenPhong",
+      "otherEntityName": "phongChieu",
+      "otherEntityRelationshipName": "ghe",
+      "relationshipName": "phongChieu",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

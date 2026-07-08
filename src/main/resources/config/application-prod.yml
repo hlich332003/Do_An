@@ -26,6 +26,8 @@ management:
         enabled: false
 
 spring:
+  cache:
+    type: jcache
   devtools:
     restart:
       enabled: false
@@ -44,8 +46,16 @@ spring:
         prepStmtCacheSize: 250
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.jdbc.batch_size: 50
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
+    enabled: false
     contexts: prod
   mail:
     host: localhost

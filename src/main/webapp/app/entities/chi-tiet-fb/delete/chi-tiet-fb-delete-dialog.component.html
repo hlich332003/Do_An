@@ -1,0 +1,22 @@
+@if (chiTietFB) {
+  <form name="deleteForm" (ngSubmit)="confirmDelete(chiTietFB.id!)">
+    <div class="modal-header">
+      <h4 class="modal-title" data-cy="chiTietFBDeleteDialogHeading">Xác nhận thao tác xóa</h4>
+    </div>
+
+    <div class="modal-body">
+      <jhi-alert-error />
+      <p id="jhi-delete-chiTietFB-heading">Bạn có chắc chắn muốn xóa Chi Tiết F&B {{ chiTietFB.id }}?</p>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+        <fa-icon icon="ban"></fa-icon>&nbsp;<span> Hủy </span>
+      </button>
+
+      <button id="jhi-confirm-delete-chiTietFB" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
+        <fa-icon icon="times"></fa-icon>&nbsp;<span> Xóa </span>
+      </button>
+    </div>
+  </form>
+}

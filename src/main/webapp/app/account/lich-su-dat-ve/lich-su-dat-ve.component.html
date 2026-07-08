@@ -1,0 +1,86 @@
+<div class="history-page py-5 bg-light min-vh-100">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h2 class="fw-bold text-dark m-0 d-flex align-items-center">
+        <div
+          class="bg-pink text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm"
+          style="width: 45px; height: 45px"
+        >
+          <fa-icon icon="history" class="fs-5"></fa-icon>
+        </div>
+        Lịch sử đặt vé
+      </h2>
+      <span class="badge bg-white text-dark border px-3 py-2 rounded-pill shadow-sm">
+        Tổng số vé: <strong class="text-pink ms-1">{{ getTongSoVe() }}</strong>
+      </span>
+    </div>
+
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-pink" role="status"></div>
+    </div>
+
+    <div
+      *ngIf="!isLoading && (!danhSachVe || danhSachVe.length === 0)"
+      class="alert bg-white border-0 shadow-sm text-center py-5 rounded-4"
+    >
+      <fa-icon icon="ticket-alt" class="fa-4x text-muted opacity-25 mb-3 d-block"></fa-icon>
+      <h5 class="text-muted fw-bold">Bạn chưa có lịch sử đặt vé nào.</h5>
+      <p class="text-muted small">Hãy đặt vé ngay để xem lại các đơn đã mua ở đây.</p>
+      <a routerLink="/phim-danh-sach" class="btn btn-primary btn-pink-gradient rounded-pill px-4 mt-2">Xem phim</a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" *ngIf="!isLoading && danhSachVe && danhSachVe.length > 0">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0 table-hover">
+          <thead class="table-light text-uppercase fs-7 text-muted">
+            <tr>
+              <th class="ps-4">Mã hóa đơn</th>
+              <th>Mã giao dịch</th>
+              <th>Phim</th>
+              <th>Rạp / Phòng</th>
+              <th>Giờ chiếu</th>
+              <th>Ghế</th>
+              <th>Trạng thái</th>
+              <th>Tổng tiền</th>
+              <th class="text-center pe-4">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ve of danhSachVe">
+              <td class="fw-bold text-dark ps-4">#{{ ve.id || 'N/A' }}</td>
+              <td class="fw-semibold text-muted">
+                <span class="badge bg-light text-secondary border px-2 py-1 rounded">{{ ve.maGiaoDich || '—' }}</span>
+              </td>
+              <td>
+                <div class="fw-bold text-dark">{{ ve.tenPhim || 'Tên phim' }}</div>
+              </td>
+              <td>
+                <div class="fw-semibold text-dark">{{ ve.tenRap || 'CinemaTick' }}</div>
+                <div class="text-muted small">{{ ve.tenPhongChieu || 'N/A' }}</div>
+              </td>
+              <td>
+                <div class="fw-semibold text-dark">{{ ve.gioChieu | date: 'HH:mm dd/MM/yyyy' }}</div>
+              </td>
+              <td class="fw-bold text-pink">{{ ve.danhSachGhe || 'N/A' }}</td>
+              <td>
+                <span class="badge rounded-pill px-3 py-2" [ngClass]="getTrangThaiClass(ve.trangThai)">
+                  {{ getTrangThaiLabel(ve.trangThai) }}
+                </span>
+              </td>
+              <td class="fw-bold text-pink">{{ ve.tongTien | number: '1.0-0' }} đ</td>
+              <td class="text-center pe-4">
+                <a
+                  [routerLink]="['/dat-ve/ket-qua']"
+                  [queryParams]="{ hoaDonId: ve.id, status: 'success' }"
+                  class="btn btn-outline-pink btn-sm rounded-pill px-3"
+                >
+                  <fa-icon icon="eye" class="me-1"></fa-icon> Xem vé
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

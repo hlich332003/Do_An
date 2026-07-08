@@ -1,0 +1,276 @@
+<div class="d-flex justify-content-center">
+  <div class="col-12 col-xl-11">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <div class="rounded-4 border-0 shadow-sm p-4 p-lg-5 mb-4" style="background: linear-gradient(135deg, #eef8ff, #ffffff)">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+          <div>
+            <p class="text-uppercase small fw-semibold mb-2" style="letter-spacing: 0.12em; color: #2d6a8e">Lập lịch</p>
+            <h2 id="jhi-suat-chieu-heading" data-cy="SuatChieuCreateUpdateHeading" class="mb-2">Lập lịch suất chiếu</h2>
+            <p class="text-muted mb-0">
+              Sau khi đã thiết lập phòng và thêm phim, admin dùng màn này để gán phim vào phòng, xếp giờ chiếu và cấu hình giá ghế.
+            </p>
+          </div>
+          <div class="rounded-4 px-4 py-3 text-dark" style="background: #f1f8fc; min-width: 280px">
+            <div class="small text-uppercase fw-semibold mb-2" style="letter-spacing: 0.08em; color: #2d6a8e">Checklist</div>
+            <div class="fw-semibold">1. Phim đã sẵn sàng</div>
+            <div class="fw-semibold">2. Phòng đã có sơ đồ ghế</div>
+            <div class="fw-semibold">3. Khung giờ không trùng lịch</div>
+          </div>
+        </div>
+      </div>
+
+      <jhi-alert-error />
+
+      @if (overlapError) {
+        <div class="alert alert-danger rounded-4 shadow-sm" role="alert">
+          Không thể lưu. Phòng chiếu đang có suất khác trong khoảng thời gian này, vui lòng đổi phòng hoặc đổi giờ.
+        </div>
+      }
+
+      @if (saveErrorMessage) {
+        <div class="alert alert-warning rounded-4 shadow-sm" role="alert">
+          {{ saveErrorMessage }}
+        </div>
+      }
+
+      @if (!hasMovieSetup || !hasRoomSetup) {
+        <div class="alert alert-warning rounded-4 shadow-sm">
+          <div class="fw-semibold mb-2">Cần hoàn tất dữ liệu nền trước khi lập lịch</div>
+          <div class="d-flex flex-wrap gap-2">
+            @if (!hasMovieSetup) {
+              <a class="btn btn-sm btn-outline-dark" [routerLink]="['/admin/phim/new']">Thêm phim</a>
+            }
+            @if (!hasRoomSetup) {
+              <a class="btn btn-sm btn-outline-dark" [routerLink]="['/admin/phong-chieu/new']">Tạo phòng chiếu</a>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="row g-4">
+        <div class="col-12 col-lg-7">
+          <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                  <h4 class="mb-1">Thông tin lịch chiếu</h4>
+                  <p class="text-muted small mb-0">Nhập thời gian bắt đầu, chọn phim và phòng chiếu đã được cấu hình.</p>
+                </div>
+                @if (isEditMode) {
+                  <span class="badge rounded-pill text-bg-light border">Đang sửa suất #{{ editForm.controls.id.value }}</span>
+                }
+              </div>
+
+              @if (isEditMode) {
+                <div class="mb-3">
+                  <label class="form-label fw-semibold" for="field_id">ID</label>
+                  <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+                </div>
+              }
+
+              @let thoiGianBatDauRef = editForm.get('thoiGianBatDau')!;
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="field_thoiGianBatDau">Thời gian bắt đầu</label>
+                <input
+                  id="field_thoiGianBatDau"
+                  data-cy="thoiGianBatDau"
+                  type="datetime-local"
+                  class="form-control form-control-lg"
+                  name="thoiGianBatDau"
+                  formControlName="thoiGianBatDau"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+                @if (thoiGianBatDauRef.invalid && (thoiGianBatDauRef.dirty || thoiGianBatDauRef.touched)) {
+                  <div>
+                    @if (editForm.get('thoiGianBatDau')?.errors?.required) {
+                      <small class="form-text text-danger">Thời gian bắt đầu là bắt buộc.</small>
+                    }
+                    <small class="form-text text-danger" [hidden]="!editForm.get('thoiGianBatDau')?.errors?.datetimelocal"
+                      >Giá trị phải đúng định dạng ngày giờ.</small
+                    >
+                  </div>
+                }
+              </div>
+
+              @let thoiGianKetThucRef = editForm.get('thoiGianKetThuc')!;
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="field_thoiGianKetThuc">Thời gian kết thúc</label>
+                <input
+                  id="field_thoiGianKetThuc"
+                  data-cy="thoiGianKetThuc"
+                  type="datetime-local"
+                  class="form-control"
+                  name="thoiGianKetThuc"
+                  formControlName="thoiGianKetThuc"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+                <div class="form-text">{{ estimatedDurationText }}</div>
+                @if (thoiGianKetThucRef.invalid && (thoiGianKetThucRef.dirty || thoiGianKetThucRef.touched)) {
+                  <div>
+                    @if (editForm.get('thoiGianKetThuc')?.errors?.required) {
+                      <small class="form-text text-danger">Thời gian kết thúc là bắt buộc.</small>
+                    }
+                    <small class="form-text text-danger" [hidden]="!editForm.get('thoiGianKetThuc')?.errors?.datetimelocal"
+                      >Giá trị phải đúng định dạng ngày giờ.</small
+                    >
+                  </div>
+                }
+              </div>
+
+              <div class="row g-3">
+                <div class="col-12 col-md-4">
+                  <label class="form-label fw-semibold" for="field_giaThuong">Giá ghế thường</label>
+                  <input
+                    id="field_giaThuong"
+                    data-cy="giaThuong"
+                    type="number"
+                    min="0"
+                    class="form-control"
+                    name="giaThuong"
+                    formControlName="giaThuong"
+                  />
+                  @if (editForm.get('giaThuong')?.invalid && (editForm.get('giaThuong')?.dirty || editForm.get('giaThuong')?.touched)) {
+                    <small class="form-text text-danger">Vui lòng nhập giá ghế thường hợp lệ.</small>
+                  }
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label class="form-label fw-semibold" for="field_giaVip">Giá ghế VIP</label>
+                  <input
+                    id="field_giaVip"
+                    data-cy="giaVip"
+                    type="number"
+                    min="0"
+                    class="form-control"
+                    name="giaVip"
+                    formControlName="giaVip"
+                  />
+                  @if (editForm.get('giaVip')?.invalid && (editForm.get('giaVip')?.dirty || editForm.get('giaVip')?.touched)) {
+                    <small class="form-text text-danger">Vui lòng nhập giá ghế VIP hợp lệ.</small>
+                  }
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label class="form-label fw-semibold" for="field_giaCouple">Giá ghế Couple</label>
+                  <input id="field_giaCouple" type="number" class="form-control" [value]="couplePrice" readonly />
+                  <div class="form-text">Tự động tính bằng 2 x giá VIP.</div>
+                </div>
+              </div>
+
+              <div class="row g-3 mt-1">
+                <div class="col-12 col-md-6">
+                  <label class="form-label fw-semibold" for="field_phim">Phim</label>
+                  <select
+                    class="form-select"
+                    id="field_phim"
+                    data-cy="phim"
+                    name="phim"
+                    formControlName="phim"
+                    [compareWith]="comparePhim"
+                    [attr.disabled]="isEditMode ? true : null"
+                  >
+                    <option [ngValue]="null">Chọn phim</option>
+                    @for (phimOption of phimsSharedCollection; track $index) {
+                      <option [ngValue]="phimOption">{{ phimOption.tenPhim }}</option>
+                    }
+                  </select>
+                  @if (editForm.get('phim')?.invalid && (editForm.get('phim')?.dirty || editForm.get('phim')?.touched)) {
+                    <small class="form-text text-danger">Vui lòng chọn phim.</small>
+                  }
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label fw-semibold" for="field_phongChieu">Phòng chiếu</label>
+                  <select
+                    class="form-select"
+                    id="field_phongChieu"
+                    data-cy="phongChieu"
+                    name="phongChieu"
+                    formControlName="phongChieu"
+                    [compareWith]="comparePhongChieu"
+                    [attr.disabled]="isEditMode ? true : null"
+                  >
+                    <option [ngValue]="null">Chọn phòng</option>
+                    @for (phongChieuOption of phongChieusSharedCollection; track $index) {
+                      <option [ngValue]="phongChieuOption">{{ phongChieuOption.tenPhong }}</option>
+                    }
+                  </select>
+                  @if (editForm.get('phongChieu')?.invalid && (editForm.get('phongChieu')?.dirty || editForm.get('phongChieu')?.touched)) {
+                    <small class="form-text text-danger">Vui lòng chọn phòng chiếu.</small>
+                  }
+                </div>
+              </div>
+
+              @if (isEditMode) {
+                <div class="rounded-4 p-3 mt-4" style="background: #f8f4ef">
+                  <div class="fw-semibold mb-1">Chế độ chỉnh sửa an toàn</div>
+                  <div class="text-muted small">Phim và phòng chiếu được khóa khi sửa để bảo toàn phôi vé và tránh vỡ lịch cũ.</div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+          <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+              <h4 class="mb-3">Tổng quan nhanh</h4>
+
+              <div class="rounded-4 p-3 mb-3" style="background: #f4f8ff">
+                <div class="small text-muted mb-1">Phim được chọn</div>
+                <div class="fw-semibold">{{ selectedPhim?.tenPhim || 'Chưa chọn phim' }}</div>
+              </div>
+
+              <div class="rounded-4 p-3 mb-3" style="background: #fff8ef">
+                <div class="small text-muted mb-1">Phòng được chọn</div>
+                <div class="fw-semibold">{{ selectedPhongChieu?.tenPhong || 'Chưa chọn phòng' }}</div>
+              </div>
+
+              <div class="rounded-4 p-3 mb-3" style="background: #f7f7f7">
+                <div class="small text-muted mb-1">Tình trạng dữ liệu nền</div>
+                <div class="d-flex flex-column gap-1">
+                  <span>Phim: {{ hasMovieSetup ? 'Sẵn sàng' : 'Còn thiếu' }}</span>
+                  <span>Phòng chiếu: {{ hasRoomSetup ? 'Sẵn sàng' : 'Còn thiếu' }}</span>
+                </div>
+              </div>
+
+              <div class="rounded-4 p-3 mb-3" style="background: #fff8ef">
+                <div class="small text-muted mb-1">Bảng giá áp dụng</div>
+                <div class="d-flex flex-column gap-1">
+                  <span>Ghế thường: {{ editForm.get('giaThuong')?.value || 0 | number }} VND</span>
+                  <span>Ghế VIP: {{ editForm.get('giaVip')?.value || 0 | number }} VND</span>
+                  <span>Ghế Couple: {{ couplePrice | number }} VND</span>
+                </div>
+              </div>
+
+              <div class="rounded-4 p-3" style="background: #eef8ff">
+                <div class="fw-semibold mb-2">Gợi ý thao tác</div>
+                <div class="d-flex flex-column gap-2">
+                  <a class="btn btn-outline-primary text-start" [routerLink]="['/admin/phong-chieu']">Xem và thiết lập phòng chiếu</a>
+                  <a class="btn btn-outline-primary text-start" [routerLink]="['/admin/phim']">Quản lý danh sách phim</a>
+                  <a class="btn btn-outline-primary text-start" [routerLink]="['/admin/suat-chieu']">Quay về danh sách suất chiếu</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex flex-wrap gap-3">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Hủy</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving || !hasMovieSetup || !hasRoomSetup"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>{{ isEditMode ? 'Lưu thay đổi' : 'Tạo suất chiếu' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

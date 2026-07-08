@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity GiamGia.
+    -->
+    <changeSet id="20260612101701-1" author="jhipster">
+        <createTable tableName="giam_gia">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ma_giam_gia" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_giam_gia__ma_giam_gia" />
+            </column>
+            <column name="mo_ta" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="phan_tram_giam" type="integer">
+                <constraints nullable="false" />
+            </column>
+            <column name="so_tien_giam_toi_da" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="dieu_kien_tong_tien" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="so_luong_su_dung" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="so_luong_con_lai" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="ngay_bat_dau" type="${datetimeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="ngay_ket_thuc" type="${datetimeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="trang_thai" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+        <dropDefaultValue tableName="giam_gia" columnName="ngay_bat_dau" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="giam_gia" columnName="ngay_ket_thuc" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
+
+</databaseChangeLog>

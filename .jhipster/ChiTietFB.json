@@ -1,0 +1,40 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084859"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "entityTableName": "chi_tiet_fb",
+  "fields": [
+    {
+      "fieldName": "soLuong",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "giaBan",
+      "fieldType": "BigDecimal"
+    }
+  ],
+  "name": "ChiTietFB",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "tenCombo",
+      "otherEntityName": "dichVuFB",
+      "relationshipName": "dichVuFB",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "hoaDon",
+      "otherEntityRelationshipName": "chiTietFB",
+      "relationshipName": "hoaDon",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

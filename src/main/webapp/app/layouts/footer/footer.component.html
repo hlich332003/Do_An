@@ -1,3 +1,59 @@
-<div class="footer">
-  <p>This is your footer</p>
-</div>
+<footer class="footer-area bg-dark text-white pt-5 pb-4 mt-5">
+  <div class="container">
+    <div class="row">
+      <!-- About Column -->
+      <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+        <h5 class="text-uppercase fw-bold mb-4 gradient-text">CinemaTick</h5>
+        <p class="text-white-50">
+          Hệ thống đặt vé xem phim trực tuyến hàng đầu, mang đến cho bạn trải nghiệm điện ảnh tuyệt vời nhất với giá cả cạnh tranh và dịch
+          vụ chuyên nghiệp.
+        </p>
+        <div class="social-icons mt-4">
+          <a href="javascript:void(0)" class="me-3"><fa-icon [icon]="['fab', 'facebook-f']"></fa-icon></a>
+          <a href="javascript:void(0)" class="me-3"><fa-icon [icon]="['fab', 'twitter']"></fa-icon></a>
+          <a href="javascript:void(0)" class="me-3"><fa-icon [icon]="['fab', 'instagram']"></fa-icon></a>
+          <a href="javascript:void(0)"><fa-icon [icon]="['fab', 'youtube']"></fa-icon></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+        <h6 class="text-uppercase fw-bold mb-4">Danh mục</h6>
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2"><a routerLink="/phim-danh-sach" class="text-white-50 text-decoration-none footer-link">Phim Đang Chiếu</a></li>
+          <li class="mb-2"><a routerLink="/phim-danh-sach" class="text-white-50 text-decoration-none footer-link">Phim Sắp Chiếu</a></li>
+          <li class="mb-2"><a routerLink="/lich-chieu" class="text-white-50 text-decoration-none footer-link">Lịch Chiếu</a></li>
+          <li class="mb-2"><a href="javascript:void(0)" class="text-white-50 text-decoration-none footer-link">Khuyến Mãi</a></li>
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+        <h6 class="text-uppercase fw-bold mb-4">Hỗ trợ</h6>
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2"><a href="javascript:void(0)" class="text-white-50 text-decoration-none footer-link">Điều khoản sử dụng</a></li>
+          <li class="mb-2"><a href="javascript:void(0)" class="text-white-50 text-decoration-none footer-link">Chính sách bảo mật</a></li>
+          <li class="mb-2"><a href="javascript:void(0)" class="text-white-50 text-decoration-none footer-link">Câu hỏi thường gặp</a></li>
+          <li class="mb-2"><a href="javascript:void(0)" class="text-white-50 text-decoration-none footer-link">Liên hệ</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="col-lg-3 col-md-6">
+        <h6 class="text-uppercase fw-bold mb-4">Liên hệ</h6>
+        <p class="text-white-50 mb-2"><fa-icon icon="map-marker-alt" class="me-2 text-pink"></fa-icon> 175 Tây Sơn</p>
+        <ul class="list-unstyled text-white-50 small">
+          <li class="mb-2"><fa-icon icon="envelope" class="me-2 text-pink"></fa-icon> support&#64;cinematick.vn</li>
+        </ul>
+        <p class="text-white-50 mb-0"><fa-icon icon="phone-alt" class="me-2 text-pink"></fa-icon> 0335364696</p>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="row align-items-center border-top border-secondary pt-4 mt-4">
+      <div class="col-12 text-center text-white-50 small">
+        <p class="mb-0">© 2026 CinemaTick. All Rights Reserved. Đồ án Hệ thống Quản lý Rạp chiếu phim.</p>
+      </div>
+    </div>
+  </div>
+</footer>

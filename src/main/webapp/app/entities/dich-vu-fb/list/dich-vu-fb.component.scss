@@ -1,0 +1,98 @@
+:host {
+  display: block;
+  padding: 1.5rem;
+  background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 100%);
+  min-height: 100vh;
+}
+
+.page-hero {
+  background: linear-gradient(135deg, #ffffff, #f8fbff);
+  border: 1px solid rgba(31, 41, 55, 0.06);
+}
+
+.section-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #7c8aa5;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.combo-card {
+  background: #fff;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12) !important;
+  }
+}
+
+.combo-image-wrap {
+  aspect-ratio: 16 / 11;
+  background: linear-gradient(135deg, #eef2ff, #fff5f8);
+  overflow: hidden;
+}
+
+.combo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.combo-price-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 61, 110, 0.95);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  box-shadow: 0 8px 20px rgba(255, 61, 110, 0.24);
+}
+
+.combo-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0;
+}
+
+.combo-id {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6b7280;
+  background: #f3f4f6;
+  border-radius: 999px;
+  padding: 0.35rem 0.55rem;
+}
+
+.combo-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.8rem;
+  margin-bottom: 0;
+}
+
+@media (max-width: 575px) {
+  :host {
+    padding: 1rem;
+  }
+}

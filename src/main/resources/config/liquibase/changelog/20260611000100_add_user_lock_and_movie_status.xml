@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20260611000100-1" author="copilot">
+        <addColumn tableName="nguoidung">
+            <column name="failed_login_attempts" type="integer" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="locked_until" type="${datetimeType}">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20260611000100-2" author="copilot">
+        <addColumn tableName="phim">
+            <column name="trang_thai" type="varchar(50)" />
+        </addColumn>
+        <sql>
+            update phim
+            set trang_thai = case
+                when ngay_khoi_chieu is not null and ngay_khoi_chieu &gt; current_date then 'COMING_SOON'
+                when ngay_khoi_chieu is not null then 'SHOWING'
+                else 'SHOWING'
+            end;
+        </sql>
+    </changeSet>
+</databaseChangeLog>
+

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20260615123000-1" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mssql"/>
+            <tableExists tableName="phim"/>
+        </preConditions>
+
+        <sql>
+            IF EXISTS (
+                SELECT 1
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = 'phim'
+                  AND COLUMN_NAME = 'poster'
+                  AND (
+                    DATA_TYPE <> 'nvarchar'
+                    OR CHARACTER_MAXIMUM_LENGTH IS NULL
+                    OR CHARACTER_MAXIMUM_LENGTH &lt;&gt; -1
+                  )
+            )
+            BEGIN
+                ALTER TABLE phim ALTER COLUMN poster NVARCHAR(MAX) NULL;
+            END
+        </sql>
+
+        <sql>
+            IF EXISTS (
+                SELECT 1
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = 'phim'
+                  AND COLUMN_NAME = 'mota'
+                  AND (
+                    DATA_TYPE <> 'nvarchar'
+                    OR CHARACTER_MAXIMUM_LENGTH IS NULL
+                    OR CHARACTER_MAXIMUM_LENGTH &lt;&gt; -1
+                  )
+            )
+            BEGIN
+                ALTER TABLE phim ALTER COLUMN mota NVARCHAR(MAX) NULL;
+            END
+        </sql>
+
+        <sql>
+            IF EXISTS (
+                SELECT 1
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = 'phim'
+                  AND COLUMN_NAME = 'trailer'
+                  AND (
+                    DATA_TYPE <> 'nvarchar'
+                    OR CHARACTER_MAXIMUM_LENGTH IS NULL
+                    OR CHARACTER_MAXIMUM_LENGTH &lt;&gt; -1
+                  )
+            )
+            BEGIN
+                ALTER TABLE phim ALTER COLUMN trailer NVARCHAR(MAX) NULL;
+            END
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

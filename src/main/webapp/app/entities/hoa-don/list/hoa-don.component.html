@@ -1,0 +1,263 @@
+<div class="invoice-management-page">
+  <!-- Hero Section -->
+  <div class="page-hero rounded-4 shadow-sm px-3 py-2 mb-3">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+      <div>
+        <p class="section-kicker mb-1">Hệ thống quản lý</p>
+        <h2 id="page-heading" data-cy="HoaDonHeading" class="mb-0 page-title">Danh sách Hóa đơn & Đặt vé</h2>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-secondary btn-sm rounded-pill" type="button" (click)="load()" [disabled]="isLoading">
+          <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+          <span class="ms-1">Làm mới</span>
+        </button>
+        <button
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary btn-sm rounded-pill"
+          [routerLink]="['/admin/hoa-don/new']"
+        >
+          <fa-icon icon="plus"></fa-icon>
+          <span class="ms-1">Thêm hóa đơn mới</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search & Filters Panel (Direct Row inside Page Hero, matching Phim list) -->
+    <div class="row g-2 align-items-end mt-3">
+      <div class="col-12 col-md-5 col-lg-4">
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+          <input
+            id="hoaDonKeyword"
+            type="text"
+            class="form-control"
+            placeholder="Tìm theo mã HĐ, mã giao dịch, email khách..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+          />
+        </div>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1" for="hoaDonFromDate">Từ ngày</label>
+        <input id="hoaDonFromDate" type="date" class="form-control form-control-sm" [(ngModel)]="fromDate" />
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1" for="hoaDonToDate">Đến ngày</label>
+        <input id="hoaDonToDate" type="date" class="form-control form-control-sm" [(ngModel)]="toDate" />
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary btn-sm px-3 rounded-pill" type="button" (click)="onSearch()">Tìm</button>
+        <button
+          class="btn btn-outline-secondary btn-sm ms-1 px-3 rounded-pill"
+          type="button"
+          (click)="clearFilters()"
+          [disabled]="!searchTerm.trim() && !fromDate && !toDate"
+        >
+          Xóa
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <jhi-alert-error />
+  <jhi-alert />
+
+  <!-- Data Display Area -->
+  @if (hoaDons().length === 0) {
+    <div class="empty-state-card text-center p-5 rounded-4 shadow-sm" id="no-result">
+      <fa-icon icon="exclamation-circle" class="text-warning display-4 mb-3"></fa-icon>
+      <h4 class="fw-semibold text-dark mb-1">Không tìm thấy dữ liệu</h4>
+      <p class="text-muted mb-0">Hệ thống chưa ghi nhận hóa đơn nào khớp với tiêu chí tìm kiếm.</p>
+    </div>
+  } @else {
+    <div class="table-container shadow-sm rounded-4 mb-4" id="entities">
+      <div class="table-responsive">
+        <table class="table custom-table mb-0" aria-describedby="page-heading">
+          <thead>
+            <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+              <th scope="col" jhiSortBy="id" class="text-center w-80">
+                <div class="d-inline-flex align-items-center">
+                  <span>ID</span>
+                  <fa-icon class="ms-1 sort-icon" icon="sort"></fa-icon>
+                </div>
+              </th>
+              <th scope="col" jhiSortBy="nguoiDung.email">
+                <div class="d-inline-flex align-items-center">
+                  <span>Khách hàng</span>
+                  <fa-icon class="ms-1 sort-icon" icon="sort"></fa-icon>
+                </div>
+              </th>
+              <th scope="col" jhiSortBy="tongTien">
+                <div class="d-inline-flex align-items-center">
+                  <span>Tổng Tiền</span>
+                  <fa-icon class="ms-1 sort-icon" icon="sort"></fa-icon>
+                </div>
+              </th>
+              <th scope="col" jhiSortBy="maGiamGia">
+                <div class="d-inline-flex align-items-center">
+                  <span>Mã Giảm</span>
+                  <fa-icon class="ms-1 sort-icon" icon="sort"></fa-icon>
+                </div>
+              </th>
+              <th scope="col" jhiSortBy="phuongThucThanhToan" class="text-center">
+                <div class="d-inline-flex align-items-center">
+                  <span>Thanh Toán</span>
+                  <fa-icon class="ms-1 sort-icon" icon="sort"></fa-icon>
+                </div>
+              </th>
+              <th scope="col" jhiSortBy="maGiaoDich">
+                <div class="d-inline-flex align-items-center">
+                  <span>Mã Giao Dịch</span>
+                  <fa-icon class="ms-1 sort-icon" icon="sort"></fa-icon>
+                </div>
+              </th>
+              <th scope="col" jhiSortBy="trangThai" class="text-center">
+                <div class="d-inline-flex align-items-center">
+                  <span>Trạng Thái</span>
+                  <fa-icon class="ms-1 sort-icon" icon="sort"></fa-icon>
+                </div>
+              </th>
+              <th scope="col" class="text-center">
+                <span>Số Vé</span>
+              </th>
+              <th scope="col" jhiSortBy="ngayTao">
+                <div class="d-inline-flex align-items-center">
+                  <span>Ngày Tạo</span>
+                  <fa-icon class="ms-1 sort-icon" icon="sort"></fa-icon>
+                </div>
+              </th>
+              <th scope="col" class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (hoaDon of hoaDons(); track trackId(hoaDon)) {
+              <tr data-cy="entityTable" class="align-middle">
+                <td class="text-center fw-semibold text-secondary text-nowrap">
+                  <a [routerLink]="['/admin/hoa-don', hoaDon.id, 'view']" class="id-link">#{{ hoaDon.id }}</a>
+                </td>
+                <td>
+                  @if (hoaDon.nguoiDung) {
+                    <div class="customer-info d-flex align-items-center">
+                      <div class="avatar-circle me-2 d-none d-sm-flex align-items-center justify-content-center">
+                        <fa-icon icon="user" class="text-primary-emphasis small"></fa-icon>
+                      </div>
+                      <div class="d-flex flex-column">
+                        <a
+                          [routerLink]="['/admin/nguoi-dung', hoaDon.nguoiDung.id, 'view']"
+                          class="customer-email fw-medium text-dark text-decoration-none"
+                          [title]="hoaDon.nguoiDung.email"
+                        >
+                          {{ hoaDon.nguoiDung.email }}
+                        </a>
+                      </div>
+                    </div>
+                  } @else {
+                    <span class="text-muted small"><fa-icon icon="user" class="me-1"></fa-icon>Khách vãng lai</span>
+                  }
+                </td>
+                <td class="fw-bold text-dark text-nowrap">{{ hoaDon.tongTien | number: '1.0-0' }} đ</td>
+                <td>
+                  @if (hoaDon.maGiamGia) {
+                    <div class="d-flex flex-column gap-0.5">
+                      <span class="badge badge-discount text-nowrap text-start">
+                        <fa-icon icon="tags" class="me-1 small"></fa-icon>{{ hoaDon.maGiamGia }}
+                      </span>
+                      @if (hoaDon.soTienGiam) {
+                        <span class="small text-danger fw-semibold ps-1">-{{ hoaDon.soTienGiam | number: '1.0-0' }} đ</span>
+                      }
+                    </div>
+                  } @else {
+                    <span class="text-muted small">—</span>
+                  }
+                </td>
+                <td class="text-center text-nowrap">
+                  <span class="pay-method-badge" [class.vnpay]="hoaDon.phuongThucThanhToan === 'VNPAY'">
+                    {{ hoaDon.phuongThucThanhToan || 'N/A' }}
+                  </span>
+                </td>
+                <td class="text-nowrap font-monospace text-secondary small">
+                  {{ hoaDon.maGiaoDich || '—' }}
+                </td>
+                <td class="text-center text-nowrap">
+                  @if (
+                    hoaDon.trangThai === '2' ||
+                    hoaDon.trangThai === 'PAID' ||
+                    hoaDon.trangThai === 'DONE' ||
+                    hoaDon.trangThai === 'SUCCESS' ||
+                    hoaDon.trangThai === 'DA_THANH_TOAN'
+                  ) {
+                    <span class="badge status-badge paid"> <fa-icon icon="check" class="me-1"></fa-icon> Đã thanh toán </span>
+                  } @else if (hoaDon.trangThai === '3' || hoaDon.trangThai === 'CANCELLED' || hoaDon.trangThai === 'HUY') {
+                    <span class="badge status-badge cancelled"> <fa-icon icon="times" class="me-1"></fa-icon> Đã hủy </span>
+                  } @else {
+                    <span class="badge status-badge pending"> <fa-icon icon="clock" class="me-1"></fa-icon> Chờ thanh toán </span>
+                  }
+                </td>
+                <td class="text-center">
+                  <span class="badge ticket-badge"> <fa-icon icon="ticket-alt" class="me-1"></fa-icon>{{ hoaDon.soVe ?? 0 }} </span>
+                </td>
+                <td class="text-secondary small text-nowrap">
+                  {{ hoaDon.ngayTao | formatMediumDatetime }}
+                </td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-1.5">
+                    <a
+                      [routerLink]="['/admin/hoa-don', hoaDon.id, 'view']"
+                      class="btn btn-action view"
+                      title="Xem chi tiết"
+                      data-cy="entityDetailsButton"
+                    >
+                      <fa-icon icon="eye"></fa-icon>
+                    </a>
+                    <a
+                      [routerLink]="['/admin/hoa-don', hoaDon.id, 'edit']"
+                      class="btn btn-action edit"
+                      title="Chỉnh sửa"
+                      data-cy="entityEditButton"
+                    >
+                      <fa-icon icon="pencil-alt"></fa-icon>
+                    </a>
+                    <button
+                      type="button"
+                      (click)="delete(hoaDon)"
+                      class="btn btn-action delete"
+                      title="Xóa hóa đơn"
+                      data-cy="entityDeleteButton"
+                    >
+                      <fa-icon icon="times"></fa-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- Pagination -->
+  @if (hoaDons().length > 0) {
+    <div
+      class="pagination-shell d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 p-3 rounded-4 bg-white shadow-sm"
+    >
+      <div class="small-text-muted text-secondary">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="pagination-container">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

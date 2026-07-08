@@ -15,6 +15,9 @@ const initialAccount: Account = {} as Account;
 export default class SettingsComponent implements OnInit {
   success = signal(false);
 
+  // Mock dữ liệu điểm tích lũy (sau này sẽ lấy từ Account model hoặc API)
+  diemTichLuy: number = 1500;
+
   settingsForm = new FormGroup({
     firstName: new FormControl(initialAccount.firstName, {
       nonNullable: true,

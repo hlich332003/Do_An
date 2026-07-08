@@ -1,0 +1,57 @@
+.bg-pink {
+  background-color: #ff3d6e !important;
+}
+
+.text-pink {
+  color: #ff3d6e !important;
+}
+
+.btn-pink-gradient {
+  background: linear-gradient(135deg, #ff7a18 0%, #ff3d6e 100%) !important;
+  border: none !important;
+  transition: all 0.25s ease !important;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 61, 110, 0.4) !important;
+  }
+}
+
+.avatar-circle {
+  border-radius: 50%;
+}
+
+/* Custom Form Styles */
+.custom-form {
+  .form-group {
+    .form-control {
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      background-color: #f8fafc;
+      transition: all 0.2s ease;
+      color: #334155;
+      font-size: 0.95rem;
+
+      &:focus {
+        background-color: #fff;
+        border-color: #ff3d6e;
+        box-shadow: 0 0 0 0.25rem rgba(255, 61, 110, 0.15);
+      }
+    }
+
+    .form-label {
+      color: #475569;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+  }
+}
+
+.reward-points-card {
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: #fff !important;
+    border-color: #ffc107 !important;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.15) !important;
+  }
+}

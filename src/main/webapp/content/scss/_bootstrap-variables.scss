@@ -18,19 +18,50 @@ $enable-print-styles: true;
 // Components:
 // Define common padding and border radius sizes and more.
 
-$border-radius: 0.15rem;
-$border-radius-lg: 0.125rem;
-$border-radius-sm: 0.1rem;
+// Colors
+$primary: #ff3d6e;
+$secondary: #6c757d;
+$success: #28a745;
+$info: #17a2b8;
+$warning: #ffc107;
+$danger: #dc3545;
+$light: #f4f7f6;
+$dark: #2c3e50;
+
+$border-radius: 12px;
+$border-radius-lg: 16px;
+$border-radius-sm: 8px;
+
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.4,
+  3: $spacer * 0.7,
+  4: $spacer * 1,
+  5: $spacer * 1.6,
+);
 
 // Body:
 // Settings for the `<body>` element.
 
-$body-bg: #ffffff;
+$body-bg: #f4f7f6;
+$body-color: #2c3e50;
 
 // Typography:
 // Font, line-height, and color for body text, headings, and more.
 
+$font-family-base:
+  'Roboto',
+  'Inter',
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  'Helvetica Neue',
+  Arial,
+  sans-serif;
 $font-size-base: 1rem;
+$headings-font-weight: 700;
 
-$dropdown-link-hover-color: white;
-$dropdown-link-hover-bg: #343a40;
+$dropdown-link-hover-color: $primary;
+$dropdown-link-hover-bg: rgba(255, 61, 110, 0.05);

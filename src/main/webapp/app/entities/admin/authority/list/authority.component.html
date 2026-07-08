@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-end">
       <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span>Refresh list</span>
+        <span> Làm mới danh sách </span>
       </button>
 
       <button
@@ -15,10 +15,19 @@
         [routerLink]="['/authority/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span>Create a new Authority</span>
+        <span>Thêm mới Phân Quyền</span>
       </button>
     </div>
   </h2>
+
+  <div class="mb-3">
+    <div class="input-group input-group-sm">
+      <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+      <input type="text" class="form-control" placeholder="Tìm theo tên quyền" [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" />
+      <button class="btn btn-outline-primary" type="button" (click)="onSearch()">Tìm</button>
+      <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()" [disabled]="!searchTerm">Xóa</button>
+    </div>
+  </div>
 
   <jhi-alert-error />
 
@@ -26,7 +35,7 @@
 
   @if (authorities().length === 0) {
     <div class="alert alert-warning" id="no-result">
-      <span>No Authorities found</span>
+      <span>Không tìm thấy Phân Quyền nào</span>
     </div>
   } @else {
     <div class="table-responsive table-entities" id="entities">
@@ -53,12 +62,12 @@
                 <div class="btn-group">
                   <a [routerLink]="['/authority', authority.name, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
                     <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline">View</span>
+                    <span class="d-none d-md-inline"> Xem </span>
                   </a>
 
                   <button type="submit" (click)="delete(authority)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
                     <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline">Delete</span>
+                    <span class="d-none d-md-inline"> Xóa </span>
                   </button>
                 </div>
               </td>

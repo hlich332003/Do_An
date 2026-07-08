@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -16,10 +16,12 @@ import { AuthorityDeleteDialogComponent } from '../delete/authority-delete-dialo
   templateUrl: './authority.component.html',
   imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective],
 })
-export class AuthorityComponent implements OnInit {
+export class AuthorityComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
+  allAuthorities = signal<IAuthority[]>([]);
   authorities = signal<IAuthority[]>([]);
   isLoading = false;
+  searchTerm = '';
 
   sortState = sortStateSignal({});
 
@@ -73,16 +75,21 @@ export class AuthorityComponent implements OnInit {
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
+    this.searchTerm = params.get('search') ?? '';
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
+    this.allAuthorities.set(dataFromBody);
     this.authorities.set(this.refineData(dataFromBody));
   }
 
   protected refineData(data: IAuthority[]): IAuthority[] {
     const { predicate, order } = this.sortState();
-    return predicate && order ? data.sort(this.sortService.startSort({ predicate, order })) : data;
+    const filtered = this.searchTerm.trim()
+      ? data.filter(authority => authority.name.toLowerCase().includes(this.searchTerm.trim().toLowerCase()))
+      : data;
+    return predicate && order ? filtered.sort(this.sortService.startSort({ predicate, order })) : filtered;
   }
 
   protected fillComponentAttributesFromResponseBody(data: IAuthority[] | null): IAuthority[] {
@@ -98,9 +105,12 @@ export class AuthorityComponent implements OnInit {
   }
 
   protected handleNavigation(sortState: SortState): void {
-    const queryParamsObj = {
+    const queryParamsObj: any = {
       sort: this.sortService.buildSortParam(sortState),
     };
+    if (this.searchTerm.trim()) {
+      queryParamsObj.search = this.searchTerm.trim();
+    }
 
     this.ngZone.run(() => {
       this.router.navigate(['./'], {
@@ -108,5 +118,19 @@ export class AuthorityComponent implements OnInit {
         queryParams: queryParamsObj,
       });
     });
+  }
+
+  onSearch(): void {
+    this.authorities.set(this.refineData(this.allAuthorities()));
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.authorities.set(this.refineData(this.allAuthorities()));
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

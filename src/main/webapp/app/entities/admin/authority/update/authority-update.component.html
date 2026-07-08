@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
     <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="jhi-authority-heading" data-cy="AuthorityCreateUpdateHeading">Create or edit a Authority</h2>
+      <h2 id="jhi-authority-heading" data-cy="AuthorityCreateUpdateHeading">Thêm mới hoặc Cập nhật Phân Quyền</h2>
 
       <div>
         <jhi-alert-error />
@@ -21,10 +21,10 @@
           @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
             <div>
               @if (editForm.get('name')?.errors?.required) {
-                <small class="form-text text-danger">This field is required.</small>
+                <small class="form-text text-danger">Trường này là bắt buộc.</small>
               }
               @if (editForm.get('name')?.errors?.maxlength) {
-                <small class="form-text text-danger">This field cannot be longer than 50 characters.</small>
+                <small class="form-text text-danger">Trường này không được vượt quá 50 ký tự.</small>
               }
             </div>
           }
@@ -33,7 +33,7 @@
 
       <div>
         <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span> Hủy </span>
         </button>
 
         <button
@@ -43,7 +43,7 @@
           [disabled]="editForm.invalid || isSaving"
           class="btn btn-primary"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+          <fa-icon icon="save"></fa-icon>&nbsp;<span> Lưu </span>
         </button>
       </div>
     </form>

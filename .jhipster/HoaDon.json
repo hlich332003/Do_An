@@ -1,0 +1,70 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084857"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "tongTien",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "maGiamGia",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "soTienGiam",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "phuongThucThanhToan",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "maGiaoDich",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "trangThai",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "ngayTao",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "ngayThanhToan",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "name": "HoaDon",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "ve",
+      "otherEntityRelationshipName": "hoaDon",
+      "relationshipName": "ve",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "chiTietFB",
+      "otherEntityRelationshipName": "hoaDon",
+      "relationshipName": "chiTietFB",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "email",
+      "otherEntityName": "nguoiDung",
+      "otherEntityRelationshipName": "hoaDon",
+      "relationshipName": "nguoiDung",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

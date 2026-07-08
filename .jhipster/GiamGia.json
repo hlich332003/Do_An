@@ -1,0 +1,59 @@
+{
+  "annotations": {
+    "changelogDate": "20260612101701"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "entityTableName": "giam_gia",
+  "fields": [
+    {
+      "fieldName": "maGiamGia",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "moTa",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "phanTramGiam",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "soTienGiamToiDa",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "dieuKienTongTien",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "soLuongSuDung",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "soLuongConLai",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "ngayBatDau",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "ngayKetThuc",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "trangThai",
+      "fieldType": "String"
+    }
+  ],
+  "name": "GiamGia",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

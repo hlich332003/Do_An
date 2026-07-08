@@ -2,8 +2,10 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.config.Constants;
 import com.mycompany.myapp.domain.Authority;
+import com.mycompany.myapp.domain.NguoiDung;
 import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.AuthorityRepository;
+import com.mycompany.myapp.repository.NguoiDungRepository;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.security.AuthoritiesConstants;
 import com.mycompany.myapp.security.SecurityUtils;
@@ -19,6 +21,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,16 +45,20 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    private final NguoiDungRepository nguoiDungRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        CacheManager cacheManager,
+        NguoiDungRepository nguoiDungRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.nguoiDungRepository = nguoiDungRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -110,6 +118,13 @@ public class UserService {
                     throw new EmailAlreadyUsedException();
                 }
             });
+        if (userDTO.getSoDienThoai() != null && !userDTO.getSoDienThoai().isBlank()) {
+            nguoiDungRepository
+                .findOneBySoDienThoai(userDTO.getSoDienThoai().trim())
+                .ifPresent(existingNguoiDung -> {
+                    throw new PhoneNumberAlreadyUsedException();
+                });
+        }
         User newUser = new User();
         String encryptedPassword = passwordEncoder.encode(password);
         newUser.setLogin(userDTO.getLogin().toLowerCase());
@@ -122,14 +137,35 @@ public class UserService {
         }
         newUser.setImageUrl(userDTO.getImageUrl());
         newUser.setLangKey(userDTO.getLangKey());
-        // new user is not active
-        newUser.setActivated(false);
-        // new user gets registration key
-        newUser.setActivationKey(RandomUtil.generateActivationKey());
+        // new user is active immediately (bypass email verification)
+        newUser.setActivated(true);
+        newUser.setFailedLoginAttempts(0);
+        newUser.setLockedUntil(null);
+        // no activation key needed
+        newUser.setActivationKey(null);
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
+
+        // Chỉ tạo NguoiDung nếu chưa tồn tại email này trong bảng
+        if (!nguoiDungRepository.findOneByEmailIgnoreCase(newUser.getEmail()).isPresent()) {
+            NguoiDung nguoiDung = new NguoiDung();
+            nguoiDung.setHoTen(buildDisplayName(userDTO));
+            nguoiDung.setEmail(newUser.getEmail());
+            nguoiDung.setMatKhau(encryptedPassword);
+            nguoiDung.setVaiTro(AuthoritiesConstants.USER);
+            nguoiDung.setTrangThai("ACTIVE");
+            nguoiDung.setDiemTichLuy(0);
+            nguoiDung.setCreatedAt(java.time.ZonedDateTime.now());
+            nguoiDung.setUpdatedAt(java.time.ZonedDateTime.now());
+            // Lưu SĐT nếu người dùng điền (chỉ set khi có giá trị để tránh vi phạm UNIQUE NULL)
+            if (userDTO.getSoDienThoai() != null && !userDTO.getSoDienThoai().isBlank()) {
+                nguoiDung.setSoDienThoai(userDTO.getSoDienThoai().trim());
+            }
+            nguoiDungRepository.save(nguoiDung);
+        }
+
         this.clearUserCaches(newUser);
         LOG.debug("Created Information for User: {}", newUser);
         return newUser;
@@ -164,6 +200,8 @@ public class UserService {
         user.setResetKey(RandomUtil.generateResetKey());
         user.setResetDate(Instant.now());
         user.setActivated(true);
+        user.setFailedLoginAttempts(0);
+        user.setLockedUntil(null);
         if (userDTO.getAuthorities() != null) {
             Set<Authority> authorities = userDTO
                 .getAuthorities()
@@ -177,6 +215,27 @@ public class UserService {
         userRepository.save(user);
         this.clearUserCaches(user);
         LOG.debug("Created Information for User: {}", user);
+
+        // Đồng bộ tạo NguoiDung để admin-created account có thể đăng nhập
+        if (user.getEmail() != null && !nguoiDungRepository.findOneByEmailIgnoreCase(user.getEmail()).isPresent()) {
+            String role = (userDTO.getAuthorities() != null && userDTO.getAuthorities().contains(AuthoritiesConstants.ADMIN))
+                ? AuthoritiesConstants.ADMIN
+                : AuthoritiesConstants.USER;
+            String displayName = buildDisplayName(userDTO);
+
+            NguoiDung nguoiDung = new NguoiDung();
+            nguoiDung.setHoTen(displayName);
+            nguoiDung.setEmail(user.getEmail());
+            nguoiDung.setMatKhau(user.getPassword()); // đã được mã hoá
+            nguoiDung.setVaiTro(role);
+            nguoiDung.setTrangThai("ACTIVE");
+            nguoiDung.setDiemTichLuy(0);
+            nguoiDung.setCreatedAt(java.time.ZonedDateTime.now());
+            nguoiDung.setUpdatedAt(java.time.ZonedDateTime.now());
+            nguoiDungRepository.save(nguoiDung);
+            LOG.debug("Created NguoiDung entry for admin-created user: {}", user.getEmail());
+        }
+
         return user;
     }
 
@@ -229,7 +288,8 @@ public class UserService {
     }
 
     /**
-     * Update basic information (first name, last name, email, language) for the current user.
+     * Update basic information (first name, last name, email, language) for the
+     * current user.
      *
      * @param firstName first name of user.
      * @param lastName  last name of user.
@@ -239,34 +299,66 @@ public class UserService {
      */
     public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
         SecurityUtils.getCurrentUserLogin()
-            .flatMap(userRepository::findOneByLogin)
-            .ifPresent(user -> {
-                user.setFirstName(firstName);
-                user.setLastName(lastName);
-                if (email != null) {
-                    user.setEmail(email.toLowerCase());
-                }
-                user.setLangKey(langKey);
-                user.setImageUrl(imageUrl);
-                userRepository.save(user);
-                this.clearUserCaches(user);
-                LOG.debug("Changed Information for User: {}", user);
+            .ifPresent(currentLogin -> {
+                userRepository
+                    .findOneByLogin(currentLogin)
+                    .ifPresent(user -> {
+                        String normalizedEmail = email != null ? email.toLowerCase() : null;
+                        user.setFirstName(firstName);
+                        user.setLastName(lastName);
+                        if (normalizedEmail != null) {
+                            user.setEmail(normalizedEmail);
+                        }
+                        user.setLangKey(langKey);
+                        user.setImageUrl(imageUrl);
+                        userRepository.save(user);
+                        this.clearUserCaches(user);
+                        LOG.debug("Changed Information for User: {}", user);
+                    });
+
+                nguoiDungRepository
+                    .findOneByEmailIgnoreCase(currentLogin)
+                    .ifPresent(nguoiDung -> {
+                        String fullName = (firstName != null ? firstName.trim() : "") + " " + (lastName != null ? lastName.trim() : "");
+                        nguoiDung.setHoTen(fullName.trim().isEmpty() ? nguoiDung.getHoTen() : fullName.trim());
+                        if (email != null && !email.isBlank()) {
+                            nguoiDung.setEmail(email.toLowerCase());
+                        }
+                        nguoiDungRepository.save(nguoiDung);
+                    });
             });
     }
 
     @Transactional
     public void changePassword(String currentClearTextPassword, String newPassword) {
-        SecurityUtils.getCurrentUserLogin()
-            .flatMap(userRepository::findOneByLogin)
-            .ifPresent(user -> {
-                String currentEncryptedPassword = user.getPassword();
-                if (!passwordEncoder.matches(currentClearTextPassword, currentEncryptedPassword)) {
+        String currentLogin = SecurityUtils.getCurrentUserLogin().orElse(null);
+        if (currentLogin == null) {
+            throw new InvalidPasswordException();
+        }
+
+        Optional<User> springUser = userRepository.findOneByLogin(currentLogin);
+        if (springUser.isPresent()) {
+            User user = springUser.get();
+            String currentEncryptedPassword = user.getPassword();
+            if (!passwordEncoder.matches(currentClearTextPassword, currentEncryptedPassword)) {
+                throw new InvalidPasswordException();
+            }
+            String encryptedPassword = passwordEncoder.encode(newPassword);
+            user.setPassword(encryptedPassword);
+            this.clearUserCaches(user);
+            LOG.debug("Changed password for User: {}", user);
+            return;
+        }
+
+        nguoiDungRepository
+            .findOneByEmailIgnoreCase(currentLogin)
+            .ifPresent(nguoiDung -> {
+                if (!passwordEncoder.matches(currentClearTextPassword, nguoiDung.getMatKhau())) {
                     throw new InvalidPasswordException();
                 }
-                String encryptedPassword = passwordEncoder.encode(newPassword);
-                user.setPassword(encryptedPassword);
-                this.clearUserCaches(user);
-                LOG.debug("Changed password for User: {}", user);
+                nguoiDung.setMatKhau(passwordEncoder.encode(newPassword));
+                nguoiDungRepository.save(nguoiDung);
+                LOG.debug("Changed password for NguoiDung: {}", nguoiDung.getEmail());
             });
     }
 
@@ -282,12 +374,46 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthoritiesByLogin(String login) {
-        return userRepository.findOneWithAuthoritiesByLogin(login);
+        Optional<User> fromNguoiDung = nguoiDungRepository
+            .findOneByEmailIgnoreCase(login)
+            .map(nd -> {
+                User user = new User();
+                user.setId(nd.getId());
+                user.setLogin(nd.getEmail());
+                user.setEmail(nd.getEmail());
+                String hoTen = nd.getHoTen();
+                if (hoTen != null && hoTen.contains(" ")) {
+                    user.setFirstName(hoTen.substring(0, hoTen.lastIndexOf(" ")));
+                    user.setLastName(hoTen.substring(hoTen.lastIndexOf(" ") + 1));
+                } else {
+                    user.setFirstName(hoTen);
+                    user.setLastName("");
+                }
+                String status = nd.getTrangThai() != null ? nd.getTrangThai().trim().toUpperCase() : "";
+                user.setActivated("1".equals(status) || "ACTIVE".equals(status) || "HOẠT ĐỘNG".equals(status));
+                user.setLangKey(Constants.DEFAULT_LANGUAGE);
+                Authority userAuth = new Authority();
+                if (nd.getVaiTro() != null && !nd.getVaiTro().trim().isEmpty()) {
+                    userAuth.setName(nd.getVaiTro().trim());
+                } else {
+                    userAuth.setName("ROLE_USER");
+                }
+                Set<Authority> auths = new HashSet<>();
+                auths.add(userAuth);
+                user.setAuthorities(auths);
+                return user;
+            });
+
+        if (fromNguoiDung.isPresent()) {
+            return fromNguoiDung;
+        }
+
+        return Optional.of(buildFallbackUser(login));
     }
 
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthorities() {
-        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByLogin);
+        return SecurityUtils.getCurrentUserLogin().flatMap(this::getUserWithAuthoritiesByLogin);
     }
 
     /**
@@ -308,6 +434,7 @@ public class UserService {
 
     /**
      * Gets a list of all the authorities.
+     *
      * @return a list of all the authorities.
      */
     @Transactional(readOnly = true)
@@ -320,5 +447,41 @@ public class UserService {
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evictIfPresent(user.getEmail());
         }
+    }
+
+    private String buildDisplayName(AdminUserDTO userDTO) {
+        String firstName = userDTO.getFirstName() != null ? userDTO.getFirstName().trim() : "";
+        String lastName = userDTO.getLastName() != null ? userDTO.getLastName().trim() : "";
+        String fullName = (firstName + " " + lastName).trim();
+        return fullName.isEmpty() ? userDTO.getLogin() : fullName;
+    }
+
+    private User buildFallbackUser(String login) {
+        User user = new User();
+        user.setLogin(login);
+        user.setEmail(login);
+        user.setActivated(true);
+        user.setLangKey(Constants.DEFAULT_LANGUAGE);
+
+        Set<Authority> auths = new HashSet<>();
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .forEach(authorityName -> {
+                    Authority authority = new Authority();
+                    authority.setName(authorityName);
+                    auths.add(authority);
+                });
+        }
+        if (auths.isEmpty()) {
+            Authority authority = new Authority();
+            authority.setName(AuthoritiesConstants.USER);
+            auths.add(authority);
+        }
+        user.setAuthorities(auths);
+        return user;
     }
 }

@@ -1,0 +1,172 @@
+.movie-detail-page {
+  min-height: 100vh;
+}
+
+.movie-detail-surface {
+  background: linear-gradient(135deg, #ffffff, #f7f9fc);
+  border-radius: 24px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.movie-poster-wrapper {
+  position: relative;
+  max-width: 260px;
+}
+
+.movie-detail-poster {
+  width: 100%;
+  border-radius: 18px;
+  object-fit: cover;
+}
+
+.age-badge-large {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 45px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #ffffff;
+    background: #e74c3c;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.5);
+  }
+}
+
+.movie-detail-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  text-transform: uppercase;
+  color: #111827;
+}
+
+.movie-detail-meta {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.detail-row {
+  font-size: 1rem;
+  line-height: 1.5;
+
+  .detail-label {
+    font-weight: 700;
+    color: #4b5563;
+    min-width: 140px;
+    display: inline-block;
+  }
+
+  .detail-value {
+    color: #111827;
+    font-weight: 600;
+  }
+}
+
+.synopsis {
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  padding-top: 1.25rem;
+  color: #374151;
+
+  h4 {
+    color: #111827;
+  }
+}
+
+.btn-pink-gradient {
+  background: linear-gradient(135deg, #ff7a18 0%, #ff3d6e 100%) !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+.review-section {
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  padding-top: 1.5rem;
+}
+
+.review-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fff3f7, #fff);
+  border: 1px solid rgba(255, 61, 110, 0.12);
+}
+
+.review-score {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ff3d6e;
+  line-height: 1;
+}
+
+.review-stars {
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  color: #f59e0b;
+}
+
+.review-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.review-card,
+.review-form-card,
+.review-empty-state {
+  border-radius: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.review-card {
+  padding: 1rem 1.1rem;
+}
+
+.review-form-card {
+  padding: 1.25rem;
+  background: linear-gradient(180deg, #fff, #fffafc);
+}
+
+.review-empty-state {
+  padding: 1.25rem;
+  color: #6b7280;
+}
+
+/* Showtimes styling */
+.showtimes-section {
+  .date-tabs-container {
+    .nav-link {
+      &:hover {
+        background-color: rgba(231, 76, 60, 0.08);
+        border-color: #e74c3c !important;
+      }
+      &.active {
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+      }
+    }
+  }
+
+  .time-btn {
+    border-color: #cbd5e1;
+    color: #475569;
+    font-size: 0.95rem;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background: linear-gradient(135deg, #ff7a18 0%, #ff3d6e 100%) !important;
+      border-color: transparent !important;
+      color: #ffffff !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 61, 110, 0.3);
+    }
+  }
+}

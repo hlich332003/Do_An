@@ -1,0 +1,50 @@
+<div class="chatbot-container">
+  <div class="chat-window" [class.open]="isOpen">
+    <div class="chat-header">
+      <h5>CinemaTick AI</h5>
+      <div class="d-flex align-items-center gap-2">
+        <button
+          class="btn btn-sm btn-link text-white p-0 border-0"
+          title="Xóa lịch sử"
+          (click)="clearHistory()"
+          style="background: transparent; outline: none; box-shadow: none"
+        >
+          <fa-icon [icon]="faTrashAlt" style="font-size: 0.9rem; opacity: 0.85"></fa-icon>
+        </button>
+        <button class="btn-close btn-close-white" (click)="toggleChat(false)" style="margin-left: 5px"></button>
+      </div>
+    </div>
+
+    <div class="chat-body" #chatBody>
+      <div *ngFor="let tinNhan of tinNhanList" class="message" [ngClass]="tinNhan.sender === 'user' ? 'user-message' : 'bot-message'">
+        <p>{{ tinNhan.text }}</p>
+      </div>
+
+      <div *ngIf="dangTai" class="message bot-message typing-indicator-container">
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Hỏi gì đi..."
+        [(ngModel)]="cauHoi"
+        (keyup.enter)="guiTinNhan()"
+        [disabled]="dangTai"
+      />
+      <button class="btn btn-primary" (click)="guiTinNhan()" [disabled]="dangTai">
+        <fa-icon [icon]="faPaperPlane"></fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="chat-bubble" (click)="toggleChat()">
+    <fa-icon [icon]="isOpen ? faTimes : faComments" size="2x"></fa-icon>
+  </div>
+</div>

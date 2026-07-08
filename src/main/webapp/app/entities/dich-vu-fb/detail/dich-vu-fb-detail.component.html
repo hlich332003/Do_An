@@ -1,0 +1,50 @@
+﻿<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (dichVuFB(); as dichVuFBRef) {
+      <div>
+        <h2 data-cy="dichVuFBDetailsHeading"><span>Dịch Vụ F&B</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ dichVuFBRef.id }}</span>
+          </dd>
+          <dt><span>Tên Combo</span></dt>
+          <dd>
+            <span>{{ dichVuFBRef.tenCombo }}</span>
+          </dd>
+          <dt><span>Mô Tả</span></dt>
+          <dd>
+            <span>{{ dichVuFBRef.moTa }}</span>
+          </dd>
+          <dt><span>Giá</span></dt>
+          <dd>
+            <span>{{ dichVuFBRef.gia }}</span>
+          </dd>
+          <dt><span>Hình Ảnh</span></dt>
+          <dd>
+            <span>{{ dichVuFBRef.hinhAnh }}</span>
+          </dd>
+          <dt><span>Trạng Thái</span></dt>
+          <dd>
+            <span>{{ formatStatusLabel(dichVuFBRef.trangThai) }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span> Quay lại </span>
+        </button>
+
+        <button type="button" [routerLink]="['/admin/dich-vu-fb', dichVuFBRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span> Sửa </span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

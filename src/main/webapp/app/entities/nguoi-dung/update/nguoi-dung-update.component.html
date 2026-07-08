@@ -1,0 +1,119 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-nguoi-dung-heading" data-cy="NguoiDungCreateUpdateHeading">Thêm mới hoặc Cập nhật Người Dùng</h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_hoTen">Họ Tên</label>
+          <input type="text" class="form-control" name="hoTen" id="field_hoTen" data-cy="hoTen" formControlName="hoTen" />
+        </div>
+
+        @let emailRef = editForm.get('email')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_email"> Email </label>
+          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
+          @if (emailRef.invalid && (emailRef.dirty || emailRef.touched)) {
+            <div>
+              @if (editForm.get('email')?.errors?.required) {
+                <small class="form-text text-danger">Trường này là bắt buộc.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let matKhauRef = editForm.get('matKhau')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_matKhau">Mật Khẩu</label>
+          <input
+            type="password"
+            class="form-control"
+            name="matKhau"
+            id="field_matKhau"
+            data-cy="matKhau"
+            formControlName="matKhau"
+            autocomplete="new-password"
+          />
+          @if (matKhauRef.invalid && (matKhauRef.dirty || matKhauRef.touched)) {
+            <div>
+              @if (editForm.get('matKhau')?.errors?.required) {
+                <small class="form-text text-danger">Trường này là bắt buộc.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_soDienThoai">Số Điện Thoại</label>
+          <input
+            type="text"
+            class="form-control"
+            name="soDienThoai"
+            id="field_soDienThoai"
+            data-cy="soDienThoai"
+            formControlName="soDienThoai"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_diaChi">Địa Chỉ</label>
+          <input type="text" class="form-control" name="diaChi" id="field_diaChi" data-cy="diaChi" formControlName="diaChi" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_diemTichLuy">Điểm Tích Lũy</label>
+          <input
+            type="number"
+            class="form-control"
+            name="diemTichLuy"
+            id="field_diemTichLuy"
+            data-cy="diemTichLuy"
+            formControlName="diemTichLuy"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_vaiTro">Vai Trò</label>
+          <select class="form-control" name="vaiTro" id="field_vaiTro" data-cy="vaiTro" formControlName="vaiTro">
+            <option [ngValue]="null">Chọn vai trò</option>
+            <option value="ROLE_USER">Khách hàng</option>
+            <option value="ROLE_ADMIN">Quản trị viên</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_trangThai">Trạng Thái</label>
+          <select class="form-control" name="trangThai" id="field_trangThai" data-cy="trangThai" formControlName="trangThai">
+            <option value="ACTIVE">Hoạt động</option>
+            <option value="BLOCKED">Bị khóa</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span> Hủy </span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span> Lưu </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

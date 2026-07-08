@@ -22,9 +22,18 @@ export class NotificationInterceptor implements HttpInterceptor {
           }
 
           if (alert) {
+            let messageVi = 'Thành công!';
+            const lowerAlert = alert.toLowerCase();
+            if (lowerAlert.includes('created') || lowerAlert.includes('tao moi') || lowerAlert.includes('them moi')) {
+              messageVi = 'Thêm mới thành công!';
+            } else if (lowerAlert.includes('updated') || lowerAlert.includes('cap nhat') || lowerAlert.includes('update')) {
+              messageVi = 'Cập nhật thành công!';
+            } else if (lowerAlert.includes('deleted') || lowerAlert.includes('xoa') || lowerAlert.includes('delete')) {
+              messageVi = 'Xóa thành công!';
+            }
             this.alertService.addAlert({
               type: 'success',
-              message: alert,
+              message: messageVi,
             });
           }
         }

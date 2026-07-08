@@ -1,0 +1,153 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate [formGroup]="editForm">
+      <h2 id="jhi-hoa-don-heading" data-cy="HoaDonCreateUpdateHeading">Chi tiết Hóa Đơn</h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_tongTien">Tổng Tiền</label>
+          <input
+            type="number"
+            class="form-control"
+            name="tongTien"
+            id="field_tongTien"
+            data-cy="tongTien"
+            formControlName="tongTien"
+            [readonly]="true"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_maGiamGia">Mã Giảm Giá</label>
+          <input
+            type="text"
+            class="form-control"
+            name="maGiamGia"
+            id="field_maGiamGia"
+            data-cy="maGiamGia"
+            formControlName="maGiamGia"
+            [readonly]="true"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_soTienGiam">Số Tiền Giảm</label>
+          <input
+            type="number"
+            class="form-control"
+            name="soTienGiam"
+            id="field_soTienGiam"
+            data-cy="soTienGiam"
+            formControlName="soTienGiam"
+            [readonly]="true"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_phuongThucThanhToan">Phương Thức Thanh Toán</label>
+          <input
+            type="text"
+            class="form-control"
+            name="phuongThucThanhToan"
+            id="field_phuongThucThanhToan"
+            data-cy="phuongThucThanhToan"
+            formControlName="phuongThucThanhToan"
+            [readonly]="true"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_maGiaoDich">Mã Giao Dịch</label>
+          <input
+            type="text"
+            class="form-control"
+            name="maGiaoDich"
+            id="field_maGiaoDich"
+            data-cy="maGiaoDich"
+            formControlName="maGiaoDich"
+            [readonly]="true"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_trangThai">Trạng Thái</label>
+          <input
+            type="text"
+            class="form-control"
+            name="trangThai"
+            id="field_trangThai"
+            [value]="getTrangThaiLabel(editForm.get('trangThai')?.value)"
+            [readonly]="true"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_ngayTao">Ngày Tạo</label>
+          <div class="d-flex">
+            <input
+              id="field_ngayTao"
+              data-cy="ngayTao"
+              type="datetime-local"
+              class="form-control"
+              name="ngayTao"
+              formControlName="ngayTao"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_ngayThanhToan">Ngày Thanh Toán</label>
+          <div class="d-flex">
+            <input
+              id="field_ngayThanhToan"
+              data-cy="ngayThanhToan"
+              type="datetime-local"
+              class="form-control"
+              name="ngayThanhToan"
+              formControlName="ngayThanhToan"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_nguoiDung">Người Dùng</label>
+          <input
+            type="text"
+            class="form-control"
+            name="nguoiDung"
+            id="field_nguoiDung"
+            [value]="
+              editForm.get('nguoiDung')?.value?.hoTen
+                ? editForm.get('nguoiDung')?.value?.hoTen + ' (' + editForm.get('nguoiDung')?.value?.email + ')'
+                : editForm.get('nguoiDung')?.value?.email || 'N/A'
+            "
+            [readonly]="true"
+          />
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="button"
+          id="cancel-save"
+          data-cy="entityCreateCancelButton"
+          class="btn btn-secondary rounded-pill px-4"
+          (click)="previousState()"
+        >
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span> Quay lại </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

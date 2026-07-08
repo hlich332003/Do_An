@@ -1,0 +1,40 @@
+/* Cinestar Badges Style */
+.cinestar-badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  display: flex;
+  gap: 2px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: white;
+  }
+
+  .badge-format {
+    background-color: rgba(0, 0, 0, 0.85);
+  }
+
+  .badge-age {
+    background-color: #28a745; /* Default Green for P */
+    &.T18 {
+      background-color: #dc3545;
+    } /* Red */
+    &.T16 {
+      background-color: #fd7e14;
+    } /* Orange */
+    &.T13 {
+      background-color: #ffc107;
+      color: #000;
+    } /* Yellow */
+  }
+}

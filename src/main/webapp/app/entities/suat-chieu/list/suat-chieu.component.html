@@ -1,0 +1,218 @@
+<div class="showtime-page">
+  <div class="showtime-hero rounded-4 border-0 shadow-sm p-4 mb-3">
+    <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3">
+      <div class="hero-copy">
+        <p class="section-kicker text-uppercase small fw-semibold mb-2">Bảng lịch chiếu</p>
+        <h2 id="page-heading" data-cy="SuatChieuHeading" class="mb-2">Quản lý suất chiếu</h2>
+      </div>
+
+      <div class="hero-actions d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-secondary btn-sm rounded-pill" type="button" (click)="load()" [disabled]="isLoading">
+          <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+          <span class="ms-1">Làm mới</span>
+        </button>
+
+        <button class="btn btn-outline-danger btn-sm rounded-pill" type="button" (click)="cleanupOverlaps()" [disabled]="isLoading">
+          <fa-icon icon="trash-alt"></fa-icon>
+          <span class="ms-1">Dọn lịch trùng</span>
+        </button>
+
+        <button
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary btn-sm rounded-pill create-suat-chieu"
+          [routerLink]="['/admin/suat-chieu/new']"
+        >
+          <fa-icon icon="plus"></fa-icon>
+          <span class="ms-1">Thêm suất chiếu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-panel rounded-4 shadow-sm p-3 mb-3">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-4 col-lg-3">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1" for="filterKeyword">Tìm nhanh</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+          <input
+            id="filterKeyword"
+            list="suatChieuSearchSuggestions"
+            type="text"
+            class="form-control form-control-sm"
+            placeholder="Tên phim, phòng, thời gian..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onFilterChange()"
+            (change)="onFilterChange()"
+          />
+        </div>
+        <datalist id="suatChieuSearchSuggestions">
+          @for (suggestion of searchSuggestions; track suggestion) {
+            <option [value]="suggestion"></option>
+          }
+        </datalist>
+      </div>
+
+      <div class="col-12 col-md-5 col-lg-3">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1" for="filterPhim">Phim</label>
+        <div class="movie-filter-box">
+          <div class="input-group input-group-sm movie-filter-search">
+            <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+            <input
+              id="filterPhim"
+              list="suatChieuPhimSuggestions"
+              class="form-control"
+              type="text"
+              placeholder="Chọn phim để lọc..."
+              [(ngModel)]="phimFilterText"
+              (ngModelChange)="onPhimFilterChange()"
+            />
+            <button class="btn btn-outline-secondary" type="button" (click)="clearPhimFilter()" [disabled]="!phimFilterText">×</button>
+          </div>
+          <datalist id="suatChieuPhimSuggestions">
+            @for (phim of phims; track phim.id) {
+              <option [value]="phim.tenPhim"></option>
+            }
+          </datalist>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1" for="filterPhong">Phòng chiếu</label>
+        <select id="filterPhong" class="form-select form-select-sm" [(ngModel)]="selectedPhongChieuId" (change)="onFilterChange()">
+          <option [ngValue]="null">Tất cả phòng</option>
+          @for (phong of phongChieus; track phong.id) {
+            <option [ngValue]="phong.id">{{ phong.tenPhong }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1" for="filterDate">Ngày chiếu</label>
+        <input
+          id="filterDate"
+          type="date"
+          class="form-control form-control-sm"
+          [(ngModel)]="selectedNgayChieu"
+          (change)="onFilterChange()"
+        />
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-2">
+        <label class="form-label small fw-semibold text-uppercase text-muted mb-1">Giờ chiếu</label>
+        <div class="d-flex align-items-center gap-2">
+          <div class="input-group input-group-sm flex-grow-1">
+            <span class="input-group-text bg-white">Từ</span>
+            <input type="time" class="form-control form-control-sm" [(ngModel)]="selectedGioBatDau" (change)="onFilterChange()" />
+          </div>
+          <div class="input-group input-group-sm flex-grow-1">
+            <span class="input-group-text bg-white">Đến</span>
+            <input type="time" class="form-control form-control-sm" [(ngModel)]="selectedGioKetThuc" (change)="onFilterChange()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 mt-2">
+        <div class="quick-dates d-flex align-items-center flex-wrap gap-1.5">
+          <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" (click)="useQuickDate(0)">Hôm nay</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" (click)="useQuickDate(-1)">Hôm qua</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" (click)="useQuickDate(1)">Ngày mai</button>
+          <button type="button" class="btn btn-primary btn-sm rounded-pill ms-auto px-3" (click)="onFilterChange()">Áp dụng</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" (click)="clearFilters()">Xóa lọc</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <jhi-alert-error />
+  <jhi-alert />
+
+  <div class="summary-strip mb-3" *ngIf="suatChieus().length > 0">
+    <span
+      >Tổng suất: <strong>{{ suatChieus().length }}</strong></span
+    >
+    <span
+      >Phòng hiển thị: <strong>{{ getRoomCount() }}</strong></span
+    >
+    <span
+      >Xung đột giờ: <strong>{{ getConflictCount() }}</strong></span
+    >
+    <span *ngIf="isFiltered">Đang lọc dữ liệu</span>
+    <span *ngIf="!isFiltered">Đang xem theo trang {{ page }}</span>
+  </div>
+
+  @if (suatChieus().length === 0) {
+    <div class="rounded-4 border shadow-sm p-4 p-lg-5 text-center bg-light" id="no-result">
+      <h4 class="mb-2">Chưa có suất chiếu nào</h4>
+      <p class="text-muted mb-4">Hãy chọn phim, phòng hoặc ngày chiếu rồi tạo suất chiếu mới.</p>
+      <a class="btn btn-primary" [routerLink]="['/admin/suat-chieu/new']">
+        <fa-icon icon="plus"></fa-icon>
+        <span class="ms-1">Tạo suất chiếu</span>
+      </a>
+    </div>
+  } @else {
+    <div class="timeline-shell rounded-4 shadow-sm">
+      <div class="timeline-header">
+        <div class="timeline-room-head">Phòng chiếu</div>
+        <div class="timeline-track-head">
+          @for (tick of timelineTicks; track tick) {
+            <span class="timeline-hour-label" [style.left.%]="((tick - timelineStartHour) / (timelineEndHour - timelineStartHour)) * 100">
+              {{ tick > 24 ? '24+' : (tick < 10 ? '0' : '') + tick + ':00' }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="timeline-body">
+        @for (room of timelineRooms; track room.key) {
+          <div class="timeline-row" data-cy="entityTable" [style.minHeight.px]="getTimelineRowHeight(room)">
+            <div class="timeline-room-title">
+              <strong>{{ room.title }}</strong>
+              <span>{{ room.showtimes.length }} suất</span>
+            </div>
+
+            <div class="timeline-track" [style.minHeight.px]="getTimelineRowHeight(room)">
+              @for (suatChieu of room.showtimes; track trackId(suatChieu)) {
+                <a
+                  [routerLink]="['/admin/suat-chieu', suatChieu.id, 'view']"
+                  class="timeline-block"
+                  [class.is-conflict]="isConflict(suatChieu)"
+                  [style.left.%]="getTimelineOffset(suatChieu)"
+                  [style.width.%]="getTimelineWidth(suatChieu)"
+                  [style.top.px]="suatChieu.lane * 42 + 10"
+                  [title]="suatChieu.phim?.tenPhim || 'Chưa gắn phim'"
+                >
+                  <span class="timeline-block__time"
+                    >{{ formatClock(suatChieu.thoiGianBatDau) }} - {{ formatClock(suatChieu.thoiGianKetThuc) }}</span
+                  >
+                  <span class="timeline-block__movie">{{ suatChieu.phim?.tenPhim || 'Chưa gắn phim' }}</span>
+                </a>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (suatChieus().length > 0 && !isFiltered) {
+    <div class="mt-3">
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

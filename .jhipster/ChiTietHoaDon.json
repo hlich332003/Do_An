@@ -1,0 +1,36 @@
+{
+  "annotations": {
+    "changelogDate": "20260610084900"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "giaVe",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "ChiTietHoaDon",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "maVe",
+      "otherEntityName": "ve",
+      "otherEntityRelationshipName": "chiTietHoaDon",
+      "relationshipName": "ve",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "hoaDon",
+      "otherEntityRelationshipName": "chiTietHoaDon",
+      "relationshipName": "hoaDon",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

@@ -1,0 +1,136 @@
+<div class="room-list-page">
+  <div class="rounded-4 border-0 shadow-sm px-4 py-3 mb-3 room-banner">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-center">
+      <div>
+        <p class="text-uppercase small fw-semibold mb-1 room-kicker">Thiết lập hệ thống</p>
+        <h2 id="page-heading" data-cy="PhongChieuHeading" class="mb-0">Quản lý phòng chiếu</h2>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-secondary btn-sm rounded-pill" (click)="load()" [disabled]="isLoading">
+          <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+          <span class="ms-1">Làm mới</span>
+        </button>
+
+        <button
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary btn-sm rounded-pill create-phong-chieu"
+          [routerLink]="['/admin/phong-chieu/new']"
+        >
+          <fa-icon icon="plus"></fa-icon>
+          <span class="ms-1">Tạo phòng mới</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="row g-2 align-items-end mt-3">
+      <div class="col-12 col-md-5 col-lg-4">
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-white"><fa-icon icon="search"></fa-icon></span>
+          <input
+            id="phongChieuSearch"
+            list="phongChieuSearchSuggestions"
+            type="text"
+            class="form-control"
+            placeholder="Tìm theo tên phòng, trạng thái, mã phòng..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+          />
+        </div>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary btn-sm px-3 rounded-pill" type="button" (click)="onSearch()">Tìm</button>
+        <button
+          class="btn btn-outline-secondary btn-sm ms-1 px-3 rounded-pill"
+          type="button"
+          (click)="clearSearch()"
+          [disabled]="!searchTerm"
+        >
+          Xóa
+        </button>
+      </div>
+
+      <datalist id="phongChieuSearchSuggestions">
+        @for (suggestion of searchSuggestions; track suggestion) {
+          <option [value]="suggestion"></option>
+        }
+      </datalist>
+    </div>
+  </div>
+
+  <jhi-alert-error />
+  <jhi-alert />
+
+  @if (phongChieus().length === 0) {
+    <div class="rounded-4 border shadow-sm p-5 text-center bg-light" id="no-result">
+      <h4 class="mb-2">Chưa có phòng chiếu nào</h4>
+      <p class="text-muted mb-4">Tạo phòng, khai báo số ghế, sau đó vào màn hình thiết lập ghế cho từng phòng.</p>
+      <a class="btn btn-primary btn-sm rounded-pill" [routerLink]="['/admin/phong-chieu/new']">
+        <fa-icon icon="plus"></fa-icon>
+        <span class="ms-1">Bắt đầu tạo phòng</span>
+      </a>
+    </div>
+  } @else {
+    <div class="room-grid">
+      @for (phongChieu of phongChieus(); track trackId(phongChieu)) {
+        <div class="room-card" data-cy="entityCard">
+          <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-3 d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                <div>
+                  <div class="text-muted small mb-1">Phòng #{{ phongChieu.id }}</div>
+                  <h5 class="mb-1 room-title">{{ phongChieu.tenPhong || 'Chưa đặt tên' }}</h5>
+                  <div class="small text-muted">{{ getSeatReadinessLabel(phongChieu) }}</div>
+                </div>
+                <span class="badge rounded-pill" [ngClass]="getRoomStatusClass(phongChieu.trangThai)">
+                  {{ getRoomStatusLabel(phongChieu.trangThai) }}
+                </span>
+              </div>
+
+              <div class="rounded-4 p-3 mb-3 room-process">
+                <div class="small text-uppercase fw-semibold text-muted mb-2">Quy trình đề xuất</div>
+                <div class="d-flex flex-column gap-1 small">
+                  <span>1. Cập nhật thông tin phòng</span>
+                  <span>2. Thiết lập sơ đồ ghế</span>
+                  <span>3. Đưa phòng vào lập suất chiếu</span>
+                </div>
+              </div>
+
+              <div class="mt-auto d-flex flex-wrap gap-2 room-actions">
+                <a [routerLink]="['/admin/phong-chieu', phongChieu.id, 'edit']" class="btn btn-primary btn-sm rounded-pill">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                  <span class="ms-1">Thiết lập phòng</span>
+                </a>
+                <a [routerLink]="['/admin/phong-chieu', phongChieu.id, 'view']" class="btn btn-outline-secondary btn-sm rounded-pill">
+                  <fa-icon icon="eye"></fa-icon>
+                  <span class="ms-1">Chi tiết</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (phongChieus().length > 0) {
+    <div class="mt-4">
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

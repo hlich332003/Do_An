@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (ghe(); as gheRef) {
+      <div>
+        <h2 data-cy="gheDetailsHeading"><span>Ghế</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ gheRef.id }}</span>
+          </dd>
+          <dt><span>Mã ghế</span></dt>
+          <dd>
+            <span>{{ gheRef.maGhe }}</span>
+          </dd>
+          <dt><span>Hàng</span></dt>
+          <dd>
+            <span>{{ gheRef.hang }}</span>
+          </dd>
+          <dt><span>Cột</span></dt>
+          <dd>
+            <span>{{ gheRef.cot }}</span>
+          </dd>
+          <dt><span>Loại ghế</span></dt>
+          <dd>
+            <span>{{ gheRef.loaiGhe }}</span>
+          </dd>
+          <dt><span>Trạng thái</span></dt>
+          <dd>
+            <span>{{ gheRef.trangThai }}</span>
+          </dd>
+          <dt><span>Phòng chiếu</span></dt>
+          <dd>
+            @if (ghe()!.phongChieu) {
+              <div>
+                <a [routerLink]="['/admin/phong-chieu', ghe()!.phongChieu?.id, 'view']">{{ gheRef.phongChieu?.tenPhong }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Quay lại</span>
+        </button>
+
+        <button type="button" [routerLink]="['/admin/ghe', gheRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Sửa</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

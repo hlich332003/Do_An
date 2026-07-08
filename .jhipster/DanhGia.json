@@ -1,0 +1,41 @@
+{
+  "annotations": {
+    "changelogDate": "20260612101700"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "soSao",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "noiDung",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "ngayTao",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "name": "DanhGia",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "email",
+      "otherEntityName": "nguoiDung",
+      "relationshipName": "nguoiDung",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "tenPhim",
+      "otherEntityName": "phim",
+      "relationshipName": "phim",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

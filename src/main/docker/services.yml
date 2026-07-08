@@ -1,11 +1,61 @@
-# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+# =====================================================================
+# CinemaTick – Docker Services cho Dev
+# Spring Boot tự động khởi động file này (spring.docker.compose.file)
+# =====================================================================
 name: cinematick
 services:
-  mysql:
-    extends:
-      file: ./mysql.yml
-      service: mysql
+  # ─── REDIS (Distributed Lock + JWT Blacklist + Cache) ────────────
   redis:
-    extends:
-      file: ./redis.yml
-      service: redis
+    image: redis:7.2-alpine
+    container_name: cinematick-redis
+    ports:
+      - '127.0.0.1:6379:6379'
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── RABBITMQ (Async Email, Delay Queue, Stats) ───────────────────
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: cinematick-rabbitmq
+    ports:
+      - '127.0.0.1:5672:5672'
+      - '127.0.0.1:15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'rabbitmqctl', 'status']
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # ─── SQL SERVER (Database) ────────────────────────────────────────
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: cinematick-mssql
+    ports:
+      - '1433:1433'
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourPassword123!
+    volumes:
+      - mssql_data:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  mssql_data:
+    driver: local

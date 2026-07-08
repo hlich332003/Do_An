@@ -4,33 +4,61 @@ import com.mycompany.myapp.domain.User;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the {@link User} entity.
+ * Mock UserRepository.
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    String USERS_BY_LOGIN_CACHE = "usersByLogin";
+public class UserRepository {
 
-    String USERS_BY_EMAIL_CACHE = "usersByEmail";
-    Optional<User> findOneByActivationKey(String activationKey);
-    List<User> findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant dateTime);
-    Optional<User> findOneByResetKey(String resetKey);
-    Optional<User> findOneByEmailIgnoreCase(String email);
-    Optional<User> findOneByLogin(String login);
+    public static final String USERS_BY_LOGIN_CACHE = "usersByLogin";
+    public static final String USERS_BY_EMAIL_CACHE = "usersByEmail";
 
-    @EntityGraph(attributePaths = "authorities")
-    @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE, unless = "#result == null")
-    Optional<User> findOneWithAuthoritiesByLogin(String login);
+    public Optional<User> findOneByActivationKey(String activationKey) {
+        return Optional.empty();
+    }
 
-    @EntityGraph(attributePaths = "authorities")
-    @Cacheable(cacheNames = USERS_BY_EMAIL_CACHE, unless = "#result == null")
-    Optional<User> findOneWithAuthoritiesByEmailIgnoreCase(String email);
+    public List<User> findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant dateTime) {
+        return List.of();
+    }
 
-    Page<User> findAllByIdNotNullAndActivatedIsTrue(Pageable pageable);
+    public Optional<User> findOneByResetKey(String resetKey) {
+        return Optional.empty();
+    }
+
+    public Optional<User> findOneByEmailIgnoreCase(String email) {
+        return Optional.empty();
+    }
+
+    public Optional<User> findOneByLogin(String login) {
+        return Optional.empty();
+    }
+
+    public Optional<User> findOneWithAuthoritiesByLogin(String login) {
+        return Optional.empty();
+    }
+
+    public Optional<User> findOneWithAuthoritiesByEmailIgnoreCase(String email) {
+        return Optional.empty();
+    }
+
+    public Page<User> findAllByIdNotNullAndActivatedIsTrue(Pageable pageable) {
+        return Page.empty();
+    }
+
+    public Optional<User> findById(Long id) {
+        return Optional.empty();
+    }
+
+    public void delete(User user) {}
+
+    public void save(User user) {}
+
+    public void flush() {}
+
+    public Page<User> findAll(Pageable pageable) {
+        return Page.empty();
+    }
 }

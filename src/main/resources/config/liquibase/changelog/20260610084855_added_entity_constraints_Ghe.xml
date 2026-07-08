@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity Ghe.
+    -->
+    <changeSet id="20260610084855-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="ve_id"
+                                 baseTableName="ghe"
+                                 constraintName="fk_ghe__ve_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="ve"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="phong_chieu_id"
+                                 baseTableName="ghe"
+                                 constraintName="fk_ghe__phong_chieu_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="phong_chieu"
+                                 />
+    </changeSet>
+</databaseChangeLog>

@@ -1,189 +1,177 @@
-<nav data-cy="navbar" class="navbar navbar-dark navbar-expand-md bg-dark">
-  <div class="container-fluid">
+<nav data-cy="navbar" class="navbar navbar-dark navbar-expand-md custom-navbar sticky-top shadow-sm">
+  <div class="container">
     <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
       <span class="logo-img"></span>
       <span class="navbar-title">CinemaTick</span>
-      <span class="navbar-version">{{ version }}</span>
     </a>
-    <a
-      class="navbar-toggler d-lg-none"
-      href="javascript:void(0);"
+
+    <button
+      class="navbar-toggler d-md-none border-0"
+      type="button"
       data-toggle="collapse"
       data-target="#navbarResponsive"
       aria-controls="navbarResponsive"
       aria-expanded="false"
-      aria-label="Toggle navigation"
+      aria-label="Chuyển trạng thái điều hướng"
       (click)="toggleNavbar()"
     >
-      <fa-icon icon="bars"></fa-icon>
-    </a>
+      <fa-icon icon="bars" class="text-white"></fa-icon>
+    </button>
+
     <div class="navbar-collapse collapse" id="navbarResponsive" [ngbCollapse]="isNavbarCollapsed()">
-      <ul class="navbar-nav ms-auto">
+      <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a class="nav-link" routerLink="/" (click)="collapseNavbar()">
-            <span>
-              <fa-icon icon="home"></fa-icon>
-              <span>Home</span>
-            </span>
+          <a class="nav-link fw-semibold" routerLink="/" (click)="collapseNavbar()">
+            <span>Trang chủ</span>
           </a>
         </li>
-        <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
-        @if (account() !== null) {
-          <li
-            ngbDropdown
-            class="nav-item dropdown pointer"
-            display="dynamic"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }"
+
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link fw-semibold" routerLink="/phim-danh-sach" (click)="collapseNavbar()">
+            <span>Phim</span>
+          </a>
+        </li>
+
+        <li class="nav-item ms-md-2 d-flex align-items-center">
+          <a
+            class="fw-bold text-dark px-3 rounded-pill shadow-sm text-decoration-none d-inline-flex align-items-center justify-content-center"
+            routerLink="/lich-chieu"
+            style="
+              background-color: #ffde59;
+              padding-top: 6px;
+              padding-bottom: 6px;
+              font-size: 0.95rem;
+              line-height: 1.2;
+              height: 34px;
+              transition: transform 0.2s;
+            "
+            (click)="collapseNavbar()"
+            onmouseover="this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.transform='translateY(0)'"
           >
-            <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="entity-menu" data-cy="entity">
-              <span>
-                <fa-icon icon="th-list"></fa-icon>
-                <span>Entities</span>
-              </span>
-            </a>
-            <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
-              <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
-            </ul>
-          </li>
-        }
-        <li
-          *jhiHasAnyAuthority="'ROLE_ADMIN'"
-          ngbDropdown
-          class="nav-item dropdown pointer"
-          display="dynamic"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="admin-menu" data-cy="adminMenu">
-            <span>
-              <fa-icon icon="users-cog"></fa-icon>
-              <span>Administration</span>
-            </span>
+            <fa-icon icon="ticket-alt" class="me-1"></fa-icon> ĐẶT VÉ NGAY
           </a>
-          <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="admin-menu">
-            <li>
-              <a
-                class="dropdown-item"
-                routerLink="/authority"
-                routerLinkActive="active"
-                [routerLinkActiveOptions]="{ exact: true }"
-                (click)="collapseNavbar()"
-              >
-                <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
-                <span>Authority</span>
-              </a>
-            </li>
-            <!-- jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here -->
-            <li>
-              <a class="dropdown-item" routerLink="/admin/user-management" routerLinkActive="active" (click)="collapseNavbar()">
-                <fa-icon icon="users" [fixedWidth]="true"></fa-icon>
-                <span>User management</span>
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" routerLink="/admin/metrics" routerLinkActive="active" (click)="collapseNavbar()">
-                <fa-icon icon="tachometer-alt" [fixedWidth]="true"></fa-icon>
-                <span>Metrics</span>
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" routerLink="/admin/health" routerLinkActive="active" (click)="collapseNavbar()">
-                <fa-icon icon="heart" [fixedWidth]="true"></fa-icon>
-                <span>Health</span>
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" routerLink="/admin/configuration" routerLinkActive="active" (click)="collapseNavbar()">
-                <fa-icon icon="cogs" [fixedWidth]="true"></fa-icon>
-                <span>Configuration</span>
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" routerLink="/admin/logs" routerLinkActive="active" (click)="collapseNavbar()">
-                <fa-icon icon="tasks" [fixedWidth]="true"></fa-icon>
-                <span>Logs</span>
-              </a>
-            </li>
-            @if (openAPIEnabled) {
-              <li>
-                <a class="dropdown-item" routerLink="/admin/docs" routerLinkActive="active" (click)="collapseNavbar()">
-                  <fa-icon icon="book" [fixedWidth]="true"></fa-icon>
-                  <span>API</span>
-                </a>
-              </li>
-            }
-          </ul>
         </li>
+
+        <li class="nav-item ms-md-4 me-md-2 d-flex align-items-center navbar-search">
+          <form class="d-flex m-0 align-items-center" (ngSubmit)="searchMovies()">
+            <div class="input-group rounded-pill overflow-hidden shadow-sm bg-white align-items-center">
+              <input
+                list="navbarPhimSearchSuggestions"
+                type="text"
+                class="form-control border-0 bg-transparent shadow-none py-1 px-3"
+                placeholder="Tìm theo tên phim"
+                [(ngModel)]="searchKeyword"
+                name="searchKeyword"
+                (input)="onSearchInput($event)"
+                style="outline: none; box-shadow: none"
+              />
+              <button
+                class="btn border-0 bg-transparent text-muted"
+                type="submit"
+                [disabled]="isSearching"
+                style="outline: none; box-shadow: none"
+              >
+                <fa-icon *ngIf="!isSearching" icon="search"></fa-icon>
+                <span *ngIf="isSearching" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              </button>
+            </div>
+          </form>
+          <datalist id="navbarPhimSearchSuggestions">
+            @for (suggestion of searchSuggestions; track suggestion) {
+              <option [value]="suggestion"></option>
+            }
+          </datalist>
+        </li>
+
         <li
           ngbDropdown
-          class="nav-item dropdown pointer"
+          class="nav-item dropdown pointer ms-md-3"
           display="dynamic"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
         >
           @let accountRef = account();
-          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu" data-cy="accountMenu">
+          <a
+            class="nav-link dropdown-toggle d-flex align-items-center auth-btn rounded-pill px-3 py-2"
+            ngbDropdownToggle
+            href="javascript:void(0);"
+            id="account-menu"
+            data-cy="accountMenu"
+          >
             @if (!accountRef?.imageUrl) {
-              <span>
-                <fa-icon icon="user"></fa-icon>
-                <span>Account</span>
-              </span>
+              <fa-icon icon="user-circle" class="me-2 fs-5"></fa-icon>
+              <span class="fw-bold">{{ accountRef ? accountRef.login : 'Tài khoản' }}</span>
             } @else {
-              <span>
-                <img [src]="accountRef!.imageUrl" class="profile-image rounded-circle" alt="Avatar" />
-              </span>
+              <img [src]="accountRef!.imageUrl" class="profile-image rounded-circle me-2 border border-2 border-white" alt="Ảnh đại diện" />
+              <span class="fw-bold">{{ accountRef!.login }}</span>
             }
           </a>
-          <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="account-menu">
+
+          <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3 mt-2" ngbDropdownMenu aria-labelledby="account-menu">
             @if (accountRef !== null) {
               <li>
+                <div class="px-3 py-2 text-center border-bottom mb-2 bg-light rounded-top">
+                  <h6 class="mb-0 fw-bold">{{ accountRef.firstName }} {{ accountRef.lastName }}</h6>
+                  <small class="text-muted">{{ accountRef.email }}</small>
+                </div>
+              </li>
+              <li>
                 <a
-                  class="dropdown-item"
+                  class="dropdown-item py-2"
                   routerLink="/account/settings"
                   routerLinkActive="active"
                   (click)="collapseNavbar()"
                   data-cy="settings"
                 >
-                  <fa-icon icon="wrench" [fixedWidth]="true"></fa-icon>
-                  <span>Settings</span>
+                  <fa-icon icon="user-edit" class="me-2 text-muted" [fixedWidth]="true"></fa-icon><span>Hồ sơ cá nhân</span>
                 </a>
               </li>
               <li>
                 <a
-                  class="dropdown-item"
+                  class="dropdown-item py-2"
                   routerLink="/account/password"
                   routerLinkActive="active"
                   (click)="collapseNavbar()"
                   data-cy="passwordItem"
                 >
-                  <fa-icon icon="lock" [fixedWidth]="true"></fa-icon>
-                  <span>Password</span>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" (click)="logout()" id="logout" data-cy="logout">
-                  <fa-icon icon="sign-out-alt" [fixedWidth]="true"></fa-icon>
-                  <span>Sign out</span>
-                </a>
-              </li>
-            } @else {
-              <li>
-                <a class="dropdown-item" (click)="login()" id="login" data-cy="login">
-                  <fa-icon icon="sign-in-alt" [fixedWidth]="true"></fa-icon>
-                  <span>Sign in</span>
+                  <fa-icon icon="key" class="me-2 text-muted" [fixedWidth]="true"></fa-icon><span>Đổi mật khẩu</span>
                 </a>
               </li>
               <li>
                 <a
-                  class="dropdown-item"
+                  class="dropdown-item py-2"
+                  routerLink="/account/lich-su-dat-ve"
+                  routerLinkActive="active"
+                  (click)="collapseNavbar()"
+                  data-cy="historyItem"
+                >
+                  <fa-icon icon="ticket-alt" class="me-2 text-muted" [fixedWidth]="true"></fa-icon><span>Lịch sử đặt vé</span>
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <li>
+                <a class="dropdown-item py-2 text-danger" (click)="logout()" id="logout" data-cy="logout">
+                  <fa-icon icon="sign-out-alt" class="me-2" [fixedWidth]="true"></fa-icon><span>Đăng xuất</span>
+                </a>
+              </li>
+            } @else {
+              <li>
+                <a class="dropdown-item py-2 fw-semibold" (click)="login()" id="login" data-cy="login">
+                  <fa-icon icon="sign-in-alt" class="me-2 text-pink" [fixedWidth]="true"></fa-icon><span class="text-pink">Đăng nhập</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item py-2"
                   routerLink="/account/register"
                   routerLinkActive="active"
                   (click)="collapseNavbar()"
                   data-cy="register"
                 >
-                  <fa-icon icon="user-plus" [fixedWidth]="true"></fa-icon>
-                  <span>Register</span>
+                  <fa-icon icon="user-plus" class="me-2 text-muted" [fixedWidth]="true"></fa-icon><span>Đăng ký thành viên</span>
                 </a>
               </li>
             }
